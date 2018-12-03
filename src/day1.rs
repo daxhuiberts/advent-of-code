@@ -12,12 +12,8 @@ pub fn part1(input: &[i32]) -> i32 {
 
 #[aoc(day1, part2)]
 pub fn part2(input: &[i32]) -> i32 {
-    input
-        .iter()
-        .cycle()
-        .scan(0, |state, value| { *state += value; Some(*state) })
-        .scan(HashSet::new(), |set, value| Some(set.replace(value)))
-        .filter_map(|value| value)
-        .next()
-        .unwrap()
+    let iterator = input.iter().cycle();
+    let cumulated = iterator.scan(0, |state, value| { *state += value; Some(*state) });
+    let duplicates = cumulated.scan(HashSet::new(), |set, value| Some(set.replace(value)));
+    duplicates.filter_map(|value| value).next().unwrap()
 }
