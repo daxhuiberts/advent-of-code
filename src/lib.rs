@@ -6,9 +6,18 @@ pub trait IterExt : Iterator {
         where Self: Sized,
               <Self as Iterator>::Item: Eq + Hash
     {
-        self.fold(HashMap::new(), |mut map, item| {
-            *map.entry(item).or_insert(0) += 1;
-            map
+        self.fold_ref(HashMap::new(), |map, item| {
+            *map.entry(item).or_default() += 1
+        })
+    }
+
+    fn fold_ref<B, F>(self, init: B, mut f: F) -> B
+        where Self: Sized,
+              F: FnMut(&mut B, Self::Item)
+    {
+        self.fold(init, |mut acc, item| {
+            f(&mut acc, item);
+            acc
         })
     }
 }
