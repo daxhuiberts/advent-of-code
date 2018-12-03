@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use regex::Regex;
 use itertools::Itertools;
 use super::IterExt;
@@ -33,13 +34,28 @@ pub fn parse_input(input: &str) -> Vec<Claim> {
 
 #[aoc(day3, part1)]
 pub fn part1(input: &[Claim]) -> usize {
-    let map = input.iter().flat_map(|claim| {
-        let xrange = claim.xoffset..(claim.xoffset + claim.width);
-        let yrange = claim.yoffset..(claim.yoffset + claim.height);
-        xrange.cartesian_product(yrange)
-    }).group_count();
+    let map = input_to_map(input);
+    map.values().filter(|count| **count > 1).count()
+}
 
-    map.values().filter(|count| count > &&1).count()
+#[aoc(day3, part2)]
+pub fn part2(input: &[Claim]) -> usize {
+    let map = input_to_map(input);
+    input.iter().find(|claim| {
+        get_positions(claim).all(|(x, y)|
+            *map.get(&(x, y)).unwrap() == 1
+        )
+    }).unwrap().id
+}
+
+fn input_to_map(input: &[Claim]) -> HashMap<(usize, usize), usize> {
+    input.iter().flat_map(|claim| get_positions(&claim)).group_count()
+}
+
+fn get_positions(claim: &Claim) -> impl Iterator<Item=(usize, usize)> {
+    let xrange = claim.xoffset..(claim.xoffset + claim.width);
+    let yrange = claim.yoffset..(claim.yoffset + claim.height);
+    xrange.cartesian_product(yrange)
 }
 
 #[test]
@@ -61,4 +77,14 @@ fn test_part1() {
         Claim { id: 3, xoffset: 5, yoffset: 5, width: 2, height: 2 },
     ];
     assert_eq!(part1(&input), 4);
+}
+
+#[test]
+fn test_part2() {
+    let input = vec![
+        Claim { id: 1, xoffset: 1, yoffset: 3, width: 4, height: 4 },
+        Claim { id: 2, xoffset: 3, yoffset: 1, width: 4, height: 4 },
+        Claim { id: 3, xoffset: 5, yoffset: 5, width: 2, height: 2 },
+    ];
+    assert_eq!(part2(&input), 3);
 }
