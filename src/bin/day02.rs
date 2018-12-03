@@ -1,6 +1,6 @@
-extern crate advent;
+extern crate aoc18;
 
-use advent::IterExt;
+use aoc18::IterExt;
 
 fn main() {
     let input = include_str!("../../inputs/day02.txt");
