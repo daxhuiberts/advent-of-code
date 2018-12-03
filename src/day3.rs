@@ -4,8 +4,8 @@ use regex::Regex;
 #[derive(Debug, PartialEq, Eq)]
 pub struct Claim {
     id: usize,
-    x: usize,
-    y: usize,
+    xoffset: usize,
+    yoffset: usize,
     width: usize,
     height: usize,
 }
@@ -22,8 +22,8 @@ pub fn parse_input(input: &str) -> Vec<Claim> {
 
         Claim {
             id: values[0],
-            x: values[1],
-            y: values[2],
+            xoffset: values[1],
+            yoffset: values[2],
             width: values[3],
             height: values[4],
         }
@@ -34,8 +34,8 @@ pub fn parse_input(input: &str) -> Vec<Claim> {
 pub fn part1(input: &[Claim]) -> usize {
     let map: HashMap<(usize, usize), usize> = HashMap::new();
     let map = input.iter().fold(map, |mut map, claim| {
-        for x in claim.x..(claim.x + claim.width) {
-            for y in claim.y..(claim.y + claim.height) {
+        for x in claim.xoffset..(claim.xoffset + claim.width) {
+            for y in claim.yoffset..(claim.yoffset + claim.height) {
                 *map.entry((x, y)).or_default() += 1;
             }
         }
@@ -49,9 +49,9 @@ pub fn part1(input: &[Claim]) -> usize {
 fn test_parse_input() {
     let input = "#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2";
     let result = vec![
-        Claim { id: 1, x: 1, y: 3, width: 4, height: 4 },
-        Claim { id: 2, x: 3, y: 1, width: 4, height: 4 },
-        Claim { id: 3, x: 5, y: 5, width: 2, height: 2 },
+        Claim { id: 1, xoffset: 1, yoffset: 3, width: 4, height: 4 },
+        Claim { id: 2, xoffset: 3, yoffset: 1, width: 4, height: 4 },
+        Claim { id: 3, xoffset: 5, yoffset: 5, width: 2, height: 2 },
     ];
     assert_eq!(parse_input(input), result);
 }
@@ -59,9 +59,9 @@ fn test_parse_input() {
 #[test]
 fn test_part1() {
     let input = vec![
-        Claim { id: 1, x: 1, y: 3, width: 4, height: 4 },
-        Claim { id: 2, x: 3, y: 1, width: 4, height: 4 },
-        Claim { id: 3, x: 5, y: 5, width: 2, height: 2 },
+        Claim { id: 1, xoffset: 1, yoffset: 3, width: 4, height: 4 },
+        Claim { id: 2, xoffset: 3, yoffset: 1, width: 4, height: 4 },
+        Claim { id: 3, xoffset: 5, yoffset: 5, width: 2, height: 2 },
     ];
     assert_eq!(part1(&input), 4);
 }
