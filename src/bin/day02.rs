@@ -1,4 +1,6 @@
-use std::collections::HashMap;
+extern crate advent;
+
+use advent::IterExt;
 
 fn main() {
     let input = include_str!("../../inputs/day02.txt");
@@ -9,14 +11,8 @@ fn main() {
 
 fn checksum(list: Vec<&str>) -> u32 {
     let (twos, threes) = list.iter().map(|entry| {
-        let char_count = entry.chars().fold(HashMap::new(), |mut map, char| {
-            *map.entry(char).or_insert(0) += 1;
-            map
-        });
-        let count_count = char_count.iter().fold(HashMap::new(), |mut map, (_char, count)| {
-            *map.entry(count).or_insert(0) += 1;
-            map
-        });
+        let char_count = entry.chars().group_count();
+        let count_count = char_count.values().group_count();
         (count_count.contains_key(&2), count_count.contains_key(&3))
     }).fold((0, 0), |(mut twos, mut threes), (two, three)| {
         if two { twos += 1 }
