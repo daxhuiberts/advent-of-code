@@ -11,7 +11,7 @@ pub struct Claim {
 
 #[aoc_generator(day3)]
 pub fn parse_input(input: &str) -> Vec<Claim> {
-    let regex = Regex::new(r"\A#(\d)+ @ (\d),(\d): (\d)x(\d)\z").unwrap();
+    let regex = Regex::new(r"\A#(\d+) @ (\d+),(\d+): (\d+)x(\d+)\z").unwrap();
 
     input.lines().map(|line| {
         let captures = regex.captures(line).unwrap();
