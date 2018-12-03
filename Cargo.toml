@@ -5,5 +5,6 @@ authors = ["Dax Huiberts <daxhuiberts@gmail.com>"]
 
 [dependencies]
 itertools = "*"
+regex = "*"
 aoc-runner = "*"
 aoc-runner-derive = "*"
