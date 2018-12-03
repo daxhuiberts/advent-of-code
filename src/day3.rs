@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use regex::Regex;
 use itertools::Itertools;
 use super::IterExt;
@@ -34,11 +33,11 @@ pub fn parse_input(input: &str) -> Vec<Claim> {
 
 #[aoc(day3, part1)]
 pub fn part1(input: &[Claim]) -> usize {
-    let map: HashMap<_, usize> = input.iter().fold_ref(HashMap::new(), |map, claim| {
+    let map = input.iter().flat_map(|claim| {
         let xrange = claim.xoffset..(claim.xoffset + claim.width);
         let yrange = claim.yoffset..(claim.yoffset + claim.height);
-        xrange.cartesian_product(yrange).for_each(|(x, y)| *map.entry((x, y)).or_default() += 1);
-    });
+        xrange.cartesian_product(yrange)
+    }).group_count();
 
     map.values().filter(|count| count > &&1).count()
 }
