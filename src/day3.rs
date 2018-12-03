@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use regex::Regex;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -29,6 +30,21 @@ pub fn parse_input(input: &str) -> Vec<Claim> {
     }).collect()
 }
 
+#[aoc(day3, part1)]
+pub fn part1(input: &[Claim]) -> usize {
+    let map: HashMap<(usize, usize), usize> = HashMap::new();
+    let map = input.iter().fold(map, |mut map, claim| {
+        for x in claim.x..(claim.x + claim.width) {
+            for y in claim.y..(claim.y + claim.height) {
+                *map.entry((x, y)).or_default() += 1;
+            }
+        }
+        map
+    });
+
+    map.values().filter(|count| count > &&1).count()
+}
+
 #[test]
 fn test_parse_input() {
     let input = "#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2";
@@ -38,4 +54,14 @@ fn test_parse_input() {
         Claim { id: 3, x: 5, y: 5, width: 2, height: 2 },
     ];
     assert_eq!(parse_input(input), result);
+}
+
+#[test]
+fn test_part1() {
+    let input = vec![
+        Claim { id: 1, x: 1, y: 3, width: 4, height: 4 },
+        Claim { id: 2, x: 3, y: 1, width: 4, height: 4 },
+        Claim { id: 3, x: 5, y: 5, width: 2, height: 2 },
+    ];
+    assert_eq!(part1(&input), 4);
 }
