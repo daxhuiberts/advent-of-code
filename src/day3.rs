@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 use regex::Regex;
+use itertools::Itertools;
+use super::IterExt;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Claim {
@@ -32,14 +34,10 @@ pub fn parse_input(input: &str) -> Vec<Claim> {
 
 #[aoc(day3, part1)]
 pub fn part1(input: &[Claim]) -> usize {
-    let map: HashMap<(usize, usize), usize> = HashMap::new();
-    let map = input.iter().fold(map, |mut map, claim| {
-        for x in claim.xoffset..(claim.xoffset + claim.width) {
-            for y in claim.yoffset..(claim.yoffset + claim.height) {
-                *map.entry((x, y)).or_default() += 1;
-            }
-        }
-        map
+    let map: HashMap<_, usize> = input.iter().fold_ref(HashMap::new(), |map, claim| {
+        let xrange = claim.xoffset..(claim.xoffset + claim.width);
+        let yrange = claim.yoffset..(claim.yoffset + claim.height);
+        xrange.cartesian_product(yrange).for_each(|(x, y)| *map.entry((x, y)).or_default() += 1);
     });
 
     map.values().filter(|count| count > &&1).count()
