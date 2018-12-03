@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 fn main() {
-    let input = include_str!("../../input.txt");
+    let input = include_str!("../../inputs/day01.txt");
     let parsed: Vec<i32> = input.lines().map(|line| line.parse().unwrap()).collect();
 
     let frequency = parsed

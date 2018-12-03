@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 fn main() {
-    let input = include_str!("../../input2.txt");
+    let input = include_str!("../../inputs/day02.txt");
     let list = input.lines().collect();
     let result = checksum(list);
     println!("{:?}", result);
