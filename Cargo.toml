@@ -8,3 +8,6 @@ itertools = "*"
 regex = "*"
 aoc-runner = "*"
 aoc-runner-derive = "*"
+
+[dev-dependencies]
+indoc = "*"
