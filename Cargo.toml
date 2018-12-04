@@ -11,3 +11,4 @@ aoc-runner-derive = "*"
 
 [dev-dependencies]
 indoc = "*"
+lazy_static = "*"

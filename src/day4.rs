@@ -54,12 +54,16 @@ fn parse_input_step1(input: &str) -> Vec<Record> {
     }).collect_vec()
 }
 
-fn parse_input_step2(input: &[Record]) -> () {
-    ()
+#[derive(Debug, PartialEq, Eq)]
+pub struct Shift;
+
+fn parse_input_step2(input: &[Record]) -> Vec<Shift> {
+    vec![]
 }
 
+
 #[aoc_generator(day4)]
-pub fn parse_input(input: &str) -> () {
+pub fn parse_input(input: &str) -> Vec<Shift> {
     parse_input_step2(&parse_input_step1(input))
 }
 
@@ -89,38 +93,46 @@ mod test {
         [1518-11-05 00:45] falls asleep
     ");
 
-    const TEST_INPUT_RESULT_STEP1: [Record; 17] = [
-        Record { month: 11, day: 01, hour: 00, minute: 00, action: Action::Begin { guard_id: 10 } },
-        Record { month: 11, day: 01, hour: 00, minute: 05, action: Action::Sleep },
-        Record { month: 11, day: 01, hour: 00, minute: 25, action: Action::Awake },
-        Record { month: 11, day: 01, hour: 00, minute: 30, action: Action::Sleep },
-        Record { month: 11, day: 01, hour: 00, minute: 55, action: Action::Awake },
-        Record { month: 11, day: 01, hour: 23, minute: 58, action: Action::Begin { guard_id: 99 } },
-        Record { month: 11, day: 02, hour: 00, minute: 40, action: Action::Sleep },
-        Record { month: 11, day: 02, hour: 00, minute: 50, action: Action::Awake },
-        Record { month: 11, day: 03, hour: 00, minute: 05, action: Action::Begin { guard_id: 10 } },
-        Record { month: 11, day: 03, hour: 00, minute: 24, action: Action::Sleep },
-        Record { month: 11, day: 03, hour: 00, minute: 29, action: Action::Awake },
-        Record { month: 11, day: 04, hour: 00, minute: 02, action: Action::Begin { guard_id: 99 } },
-        Record { month: 11, day: 04, hour: 00, minute: 36, action: Action::Sleep },
-        Record { month: 11, day: 04, hour: 00, minute: 46, action: Action::Awake },
-        Record { month: 11, day: 05, hour: 00, minute: 03, action: Action::Begin { guard_id: 99 } },
-        Record { month: 11, day: 05, hour: 00, minute: 45, action: Action::Sleep },
-        Record { month: 11, day: 05, hour: 00, minute: 55, action: Action::Awake },
-    ];
+    lazy_static! {
+        static ref TEST_INPUT_RESULT_STEP1: Vec<Record> = {
+            vec![
+                Record { month: 11, day: 01, hour: 00, minute: 00, action: Action::Begin { guard_id: 10 } },
+                Record { month: 11, day: 01, hour: 00, minute: 05, action: Action::Sleep },
+                Record { month: 11, day: 01, hour: 00, minute: 25, action: Action::Awake },
+                Record { month: 11, day: 01, hour: 00, minute: 30, action: Action::Sleep },
+                Record { month: 11, day: 01, hour: 00, minute: 55, action: Action::Awake },
+                Record { month: 11, day: 01, hour: 23, minute: 58, action: Action::Begin { guard_id: 99 } },
+                Record { month: 11, day: 02, hour: 00, minute: 40, action: Action::Sleep },
+                Record { month: 11, day: 02, hour: 00, minute: 50, action: Action::Awake },
+                Record { month: 11, day: 03, hour: 00, minute: 05, action: Action::Begin { guard_id: 10 } },
+                Record { month: 11, day: 03, hour: 00, minute: 24, action: Action::Sleep },
+                Record { month: 11, day: 03, hour: 00, minute: 29, action: Action::Awake },
+                Record { month: 11, day: 04, hour: 00, minute: 02, action: Action::Begin { guard_id: 99 } },
+                Record { month: 11, day: 04, hour: 00, minute: 36, action: Action::Sleep },
+                Record { month: 11, day: 04, hour: 00, minute: 46, action: Action::Awake },
+                Record { month: 11, day: 05, hour: 00, minute: 03, action: Action::Begin { guard_id: 99 } },
+                Record { month: 11, day: 05, hour: 00, minute: 45, action: Action::Sleep },
+                Record { month: 11, day: 05, hour: 00, minute: 55, action: Action::Awake },
+            ]
+        };
+
+        static ref TEST_INPUT_RESULT_STEP2: Vec<Shift> = {
+            vec![]
+        };
+    }
 
     #[test]
     fn test_parse_input_step1() {
-        assert_eq!(parse_input_step1(TEST_INPUT_DATA), TEST_INPUT_RESULT_STEP1);
+        assert_eq!(parse_input_step1(TEST_INPUT_DATA), *TEST_INPUT_RESULT_STEP1);
     }
 
     #[test]
     fn test_parse_input_step2() {
-        assert_eq!(parse_input_step2(&TEST_INPUT_RESULT_STEP1), ());
+        assert_eq!(parse_input_step2(&*TEST_INPUT_RESULT_STEP1), *TEST_INPUT_RESULT_STEP2);
     }
 
     #[test]
     fn test_parse_input() {
-        assert_eq!(parse_input(TEST_INPUT_DATA), ());
+        assert_eq!(parse_input(TEST_INPUT_DATA), *TEST_INPUT_RESULT_STEP2);
     }
 }

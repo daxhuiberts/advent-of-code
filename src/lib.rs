@@ -6,6 +6,9 @@ extern crate aoc_runner;
 extern crate aoc_runner_derive;
 #[cfg(test)]
 extern crate indoc;
+#[cfg(test)]
+#[macro_use]
+extern crate lazy_static;
 
 pub mod iterext;
 
