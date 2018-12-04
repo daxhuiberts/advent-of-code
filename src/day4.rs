@@ -4,9 +4,12 @@ use regex::Regex;
 use chrono::NaiveDate;
 use super::IterExt;
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+struct GuardId(usize);
+
 #[derive(Debug, PartialEq, Eq)]
 enum Action {
-    Begin { guard_id: usize },
+    Begin(GuardId),
     Sleep,
     Awake,
 }
@@ -33,7 +36,7 @@ fn parse_input_step1(input: &str) -> Vec<Record> {
 
         let action = regex_action_begin.captures(action_str).map(|captures| {
                 let guard_id = captures.get(1).unwrap().as_str().parse().unwrap();
-                Action::Begin { guard_id }
+                Action::Begin(GuardId(guard_id))
             }).unwrap_or_else(|| {
                 match action_str {
                     "falls asleep" => Action::Sleep,
@@ -61,7 +64,7 @@ struct SleepPeriod {
 #[derive(Debug, PartialEq, Eq)]
 pub struct Shift {
     date: NaiveDate,
-    guard_id: usize,
+    guard_id: GuardId,
     asleep: Vec<SleepPeriod>,
 }
 
@@ -71,7 +74,7 @@ fn parse_input_step2(input: &[Record]) -> Vec<Shift> {
 
     for record in input {
         match record.action {
-            Action::Begin { guard_id } => {
+            Action::Begin(guard_id) => {
                 let date = if record.hour == 23 { record.date.succ() } else { record.date };
                 result.push(Shift { date, guard_id, asleep: vec![] });
             },
@@ -109,7 +112,7 @@ pub fn part1(input: &[Shift]) -> usize {
 
     let sleepiest_minute = sleepy_minutes.iter().max_by_key(|(_minute, sleep_count)| *sleep_count).unwrap().0;
 
-    *sleepiest_guard * *sleepiest_minute
+    sleepiest_guard.0 * *sleepiest_minute
 }
 
 #[cfg(test)]
@@ -141,21 +144,21 @@ mod test {
     lazy_static! {
         static ref TEST_INPUT_INTERMEDIATE_RESULT: Vec<Record> = {
             vec![
-                Record { date: NaiveDate::from_ymd(1518, 11, 01), hour: 00, minute: 00, action: Action::Begin { guard_id: 10 } },
+                Record { date: NaiveDate::from_ymd(1518, 11, 01), hour: 00, minute: 00, action: Action::Begin(GuardId(10)) },
                 Record { date: NaiveDate::from_ymd(1518, 11, 01), hour: 00, minute: 05, action: Action::Sleep },
                 Record { date: NaiveDate::from_ymd(1518, 11, 01), hour: 00, minute: 25, action: Action::Awake },
                 Record { date: NaiveDate::from_ymd(1518, 11, 01), hour: 00, minute: 30, action: Action::Sleep },
                 Record { date: NaiveDate::from_ymd(1518, 11, 01), hour: 00, minute: 55, action: Action::Awake },
-                Record { date: NaiveDate::from_ymd(1518, 11, 01), hour: 23, minute: 58, action: Action::Begin { guard_id: 99 } },
+                Record { date: NaiveDate::from_ymd(1518, 11, 01), hour: 23, minute: 58, action: Action::Begin(GuardId(99)) },
                 Record { date: NaiveDate::from_ymd(1518, 11, 02), hour: 00, minute: 40, action: Action::Sleep },
                 Record { date: NaiveDate::from_ymd(1518, 11, 02), hour: 00, minute: 50, action: Action::Awake },
-                Record { date: NaiveDate::from_ymd(1518, 11, 03), hour: 00, minute: 05, action: Action::Begin { guard_id: 10 } },
+                Record { date: NaiveDate::from_ymd(1518, 11, 03), hour: 00, minute: 05, action: Action::Begin(GuardId(10)) },
                 Record { date: NaiveDate::from_ymd(1518, 11, 03), hour: 00, minute: 24, action: Action::Sleep },
                 Record { date: NaiveDate::from_ymd(1518, 11, 03), hour: 00, minute: 29, action: Action::Awake },
-                Record { date: NaiveDate::from_ymd(1518, 11, 04), hour: 00, minute: 02, action: Action::Begin { guard_id: 99 } },
+                Record { date: NaiveDate::from_ymd(1518, 11, 04), hour: 00, minute: 02, action: Action::Begin(GuardId(99)) },
                 Record { date: NaiveDate::from_ymd(1518, 11, 04), hour: 00, minute: 36, action: Action::Sleep },
                 Record { date: NaiveDate::from_ymd(1518, 11, 04), hour: 00, minute: 46, action: Action::Awake },
-                Record { date: NaiveDate::from_ymd(1518, 11, 05), hour: 00, minute: 03, action: Action::Begin { guard_id: 99 } },
+                Record { date: NaiveDate::from_ymd(1518, 11, 05), hour: 00, minute: 03, action: Action::Begin(GuardId(99)) },
                 Record { date: NaiveDate::from_ymd(1518, 11, 05), hour: 00, minute: 45, action: Action::Sleep },
                 Record { date: NaiveDate::from_ymd(1518, 11, 05), hour: 00, minute: 55, action: Action::Awake },
             ]
@@ -163,11 +166,11 @@ mod test {
 
         static ref TEST_INPUT_RESULT: Vec<Shift> = {
             vec![
-                Shift { date: NaiveDate::from_ymd(1518, 11, 01), guard_id: 10, asleep: vec![SleepPeriod { begin: 05, end: 25 }, SleepPeriod { begin: 30, end: 55 }] },
-                Shift { date: NaiveDate::from_ymd(1518, 11, 02), guard_id: 99, asleep: vec![SleepPeriod { begin: 40, end: 50 }] },
-                Shift { date: NaiveDate::from_ymd(1518, 11, 03), guard_id: 10, asleep: vec![SleepPeriod { begin: 24, end: 29 }] },
-                Shift { date: NaiveDate::from_ymd(1518, 11, 04), guard_id: 99, asleep: vec![SleepPeriod { begin: 36, end: 46 }] },
-                Shift { date: NaiveDate::from_ymd(1518, 11, 05), guard_id: 99, asleep: vec![SleepPeriod { begin: 45, end: 55 }] },
+                Shift { date: NaiveDate::from_ymd(1518, 11, 01), guard_id: GuardId(10), asleep: vec![SleepPeriod { begin: 05, end: 25 }, SleepPeriod { begin: 30, end: 55 }] },
+                Shift { date: NaiveDate::from_ymd(1518, 11, 02), guard_id: GuardId(99), asleep: vec![SleepPeriod { begin: 40, end: 50 }] },
+                Shift { date: NaiveDate::from_ymd(1518, 11, 03), guard_id: GuardId(10), asleep: vec![SleepPeriod { begin: 24, end: 29 }] },
+                Shift { date: NaiveDate::from_ymd(1518, 11, 04), guard_id: GuardId(99), asleep: vec![SleepPeriod { begin: 36, end: 46 }] },
+                Shift { date: NaiveDate::from_ymd(1518, 11, 05), guard_id: GuardId(99), asleep: vec![SleepPeriod { begin: 45, end: 55 }] },
             ]
         };
     }
