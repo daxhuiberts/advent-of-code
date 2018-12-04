@@ -20,6 +20,18 @@ pub trait IterExt : Iterator {
             acc
         })
     }
+
+    fn grouped<K, F>(self, mut f: F) -> HashMap<K, Vec<Self::Item>>
+        where Self: Sized,
+              F: FnMut(&Self::Item) -> K,
+              K: Eq + Hash
+    {
+        self.fold_ref(HashMap::new(), |map, item| {
+            let key = f(&item);
+            let entry = map.entry(key).or_default();
+            entry.push(item);
+        })
+    }
 }
 
 impl<T> IterExt for T where T: Iterator { }

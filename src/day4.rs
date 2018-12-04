@@ -1,6 +1,8 @@
+use std::collections::HashMap;
 use itertools::Itertools;
 use regex::Regex;
 use chrono::NaiveDate;
+use super::IterExt;
 
 #[derive(Debug, PartialEq, Eq)]
 enum Action {
@@ -94,6 +96,25 @@ pub fn parse_input(input: &str) -> Vec<Shift> {
     parse_input_step2(&parse_input_step1(input))
 }
 
+#[aoc(day4, part1)]
+pub fn part1(input: &[Shift]) -> usize {
+    let grouped_shifts = input.iter().grouped(|item| item.guard_id);
+
+    let sleepiest_guard = grouped_shifts.iter().max_by_key(|(_guard_id, shifts)|
+        shifts.iter().map(|shift|
+            shift.asleep.iter().map(|period| period.end - period.begin).sum::<usize>()
+        ).sum::<usize>()
+    ).unwrap().0;
+
+    let sleepy_minutes: HashMap<usize, usize> = grouped_shifts.get(sleepiest_guard).unwrap().iter().flat_map(|shifts| {
+        shifts.asleep.iter().flat_map(|period| period.begin..period.end)
+    }).group_count();
+
+    let sleepiest_minute = sleepy_minutes.iter().max_by_key(|(_minute, sleep_count)| *sleep_count).unwrap().0;
+
+    *sleepiest_guard * *sleepiest_minute
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -167,5 +188,10 @@ mod test {
     #[test]
     fn test_parse_input() {
         assert_eq!(parse_input(TEST_INPUT_DATA), *TEST_INPUT_RESULT);
+    }
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(&*TEST_INPUT_RESULT), 240);
     }
 }
