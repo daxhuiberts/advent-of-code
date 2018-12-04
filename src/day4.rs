@@ -44,7 +44,13 @@ fn parse_input_step1(input: &str) -> Vec<Record> {
                 }
             });
 
-        Record { month, day, hour, minute, action }
+        let record = Record { month, day, hour, minute, action };
+
+        if (record.action == Action::Sleep || record.action == Action::Awake) && record.hour == 23 {
+            panic!("Can't fall asleep of wake up before midnight");
+        }
+
+        record
     }).collect_vec()
 }
 
