@@ -17,8 +17,7 @@ pub struct Record {
     action: Action,
 }
 
-#[aoc_generator(day4)]
-pub fn parse_input(input: &str) -> Vec<Record> {
+fn parse_input_step1(input: &str) -> Vec<Record> {
     let regex_line = Regex::new(r"\A\[1518-(\d\d)-(\d\d) (23|00):(\d\d)\] (.+)\z").unwrap();
     let regex_action_begin = Regex::new(r"\AGuard #(\d+) begins shift\z").unwrap();
 
@@ -49,6 +48,15 @@ pub fn parse_input(input: &str) -> Vec<Record> {
     }).collect_vec()
 }
 
+fn parse_input_step2(input: &[Record]) -> () {
+    ()
+}
+
+#[aoc_generator(day4)]
+pub fn parse_input(input: &str) -> () {
+    parse_input_step2(&parse_input_step1(input))
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -75,7 +83,7 @@ mod test {
         [1518-11-05 00:45] falls asleep
     ");
 
-    const TEST_INPUT_RESULT: [Record; 17] = [
+    const TEST_INPUT_RESULT_STEP1: [Record; 17] = [
         Record { month: 11, day: 01, hour: 00, minute: 00, action: Action::Begin { guard_id: 10 } },
         Record { month: 11, day: 01, hour: 00, minute: 05, action: Action::Sleep },
         Record { month: 11, day: 01, hour: 00, minute: 25, action: Action::Awake },
@@ -96,7 +104,17 @@ mod test {
     ];
 
     #[test]
+    fn test_parse_input_step1() {
+        assert_eq!(parse_input_step1(TEST_INPUT_DATA), TEST_INPUT_RESULT_STEP1);
+    }
+
+    #[test]
+    fn test_parse_input_step2() {
+        assert_eq!(parse_input_step2(&TEST_INPUT_RESULT_STEP1), ());
+    }
+
+    #[test]
     fn test_parse_input() {
-        assert_eq!(parse_input(TEST_INPUT_DATA), TEST_INPUT_RESULT);
+        assert_eq!(parse_input(TEST_INPUT_DATA), ());
     }
 }
