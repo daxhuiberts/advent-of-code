@@ -121,7 +121,7 @@ mod test {
     ");
 
     lazy_static! {
-        static ref TEST_INPUT_RESULT_STEP1: Vec<Record> = {
+        static ref TEST_INPUT_INTERMEDIATE_RESULT: Vec<Record> = {
             vec![
                 Record { date: NaiveDate::from_ymd(1518, 11, 01), hour: 00, minute: 00, action: Action::Begin { guard_id: 10 } },
                 Record { date: NaiveDate::from_ymd(1518, 11, 01), hour: 00, minute: 05, action: Action::Sleep },
@@ -143,7 +143,7 @@ mod test {
             ]
         };
 
-        static ref TEST_INPUT_RESULT_STEP2: Vec<Shift> = {
+        static ref TEST_INPUT_RESULT: Vec<Shift> = {
             vec![
                 Shift { date: NaiveDate::from_ymd(1518, 11, 01), guard_id: 10, asleep: vec![SleepPeriod { begin: 05, end: 25 }, SleepPeriod { begin: 30, end: 55 }] },
                 Shift { date: NaiveDate::from_ymd(1518, 11, 02), guard_id: 99, asleep: vec![SleepPeriod { begin: 40, end: 50 }] },
@@ -156,16 +156,16 @@ mod test {
 
     #[test]
     fn test_parse_input_step1() {
-        assert_eq!(parse_input_step1(TEST_INPUT_DATA), *TEST_INPUT_RESULT_STEP1);
+        assert_eq!(parse_input_step1(TEST_INPUT_DATA), *TEST_INPUT_INTERMEDIATE_RESULT);
     }
 
     #[test]
     fn test_parse_input_step2() {
-        assert_eq!(parse_input_step2(&*TEST_INPUT_RESULT_STEP1), *TEST_INPUT_RESULT_STEP2);
+        assert_eq!(parse_input_step2(&*TEST_INPUT_INTERMEDIATE_RESULT), *TEST_INPUT_RESULT);
     }
 
     #[test]
     fn test_parse_input() {
-        assert_eq!(parse_input(TEST_INPUT_DATA), *TEST_INPUT_RESULT_STEP2);
+        assert_eq!(parse_input(TEST_INPUT_DATA), *TEST_INPUT_RESULT);
     }
 }
