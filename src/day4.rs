@@ -56,7 +56,7 @@ fn parse_input_step1(input: &str) -> Vec<Record> {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-struct SleepPeriod {
+struct Period {
     begin: usize,
     end: usize,
 }
@@ -65,7 +65,7 @@ struct SleepPeriod {
 pub struct Shift {
     date: NaiveDate,
     guard_id: GuardId,
-    asleep: Vec<SleepPeriod>,
+    asleep: Vec<Period>,
 }
 
 fn parse_input_step2(input: &[Record]) -> Vec<Shift> {
@@ -81,7 +81,7 @@ fn parse_input_step2(input: &[Record]) -> Vec<Shift> {
             Action::Sleep => sleep_minute = record.minute,
             Action::Awake => {
                 let shift: &mut Shift = result.last_mut().unwrap();
-                let sleep_period = SleepPeriod { begin: sleep_minute, end: record.minute };
+                let sleep_period = Period { begin: sleep_minute, end: record.minute };
                 shift.asleep.push(sleep_period);
             },
         }
@@ -166,11 +166,11 @@ mod test {
 
         static ref TEST_INPUT_RESULT: Vec<Shift> = {
             vec![
-                Shift { date: NaiveDate::from_ymd(1518, 11, 01), guard_id: GuardId(10), asleep: vec![SleepPeriod { begin: 05, end: 25 }, SleepPeriod { begin: 30, end: 55 }] },
-                Shift { date: NaiveDate::from_ymd(1518, 11, 02), guard_id: GuardId(99), asleep: vec![SleepPeriod { begin: 40, end: 50 }] },
-                Shift { date: NaiveDate::from_ymd(1518, 11, 03), guard_id: GuardId(10), asleep: vec![SleepPeriod { begin: 24, end: 29 }] },
-                Shift { date: NaiveDate::from_ymd(1518, 11, 04), guard_id: GuardId(99), asleep: vec![SleepPeriod { begin: 36, end: 46 }] },
-                Shift { date: NaiveDate::from_ymd(1518, 11, 05), guard_id: GuardId(99), asleep: vec![SleepPeriod { begin: 45, end: 55 }] },
+                Shift { date: NaiveDate::from_ymd(1518, 11, 01), guard_id: GuardId(10), asleep: vec![Period { begin: 05, end: 25 }, Period { begin: 30, end: 55 }] },
+                Shift { date: NaiveDate::from_ymd(1518, 11, 02), guard_id: GuardId(99), asleep: vec![Period { begin: 40, end: 50 }] },
+                Shift { date: NaiveDate::from_ymd(1518, 11, 03), guard_id: GuardId(10), asleep: vec![Period { begin: 24, end: 29 }] },
+                Shift { date: NaiveDate::from_ymd(1518, 11, 04), guard_id: GuardId(99), asleep: vec![Period { begin: 36, end: 46 }] },
+                Shift { date: NaiveDate::from_ymd(1518, 11, 05), guard_id: GuardId(99), asleep: vec![Period { begin: 45, end: 55 }] },
             ]
         };
     }
