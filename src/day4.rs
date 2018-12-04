@@ -55,7 +55,7 @@ mod test {
     use indoc::indoc;
 
     // Use the test data from the description, but mess up chronological ordering.
-    const TEST_DATA: &'static str = indoc!("
+    const TEST_INPUT_DATA: &'static str = indoc!("
         [1518-11-03 00:05] Guard #10 begins shift
         [1518-11-01 00:00] Guard #10 begins shift
         [1518-11-01 23:58] Guard #99 begins shift
@@ -75,28 +75,28 @@ mod test {
         [1518-11-05 00:45] falls asleep
     ");
 
+    const TEST_INPUT_RESULT: [Record; 17] = [
+        Record { month: 11, day: 01, hour: 00, minute: 00, action: Action::Begin { guard_id: 10 } },
+        Record { month: 11, day: 01, hour: 00, minute: 05, action: Action::Sleep },
+        Record { month: 11, day: 01, hour: 00, minute: 25, action: Action::Awake },
+        Record { month: 11, day: 01, hour: 00, minute: 30, action: Action::Sleep },
+        Record { month: 11, day: 01, hour: 00, minute: 55, action: Action::Awake },
+        Record { month: 11, day: 01, hour: 23, minute: 58, action: Action::Begin { guard_id: 99 } },
+        Record { month: 11, day: 02, hour: 00, minute: 40, action: Action::Sleep },
+        Record { month: 11, day: 02, hour: 00, minute: 50, action: Action::Awake },
+        Record { month: 11, day: 03, hour: 00, minute: 05, action: Action::Begin { guard_id: 10 } },
+        Record { month: 11, day: 03, hour: 00, minute: 24, action: Action::Sleep },
+        Record { month: 11, day: 03, hour: 00, minute: 29, action: Action::Awake },
+        Record { month: 11, day: 04, hour: 00, minute: 02, action: Action::Begin { guard_id: 99 } },
+        Record { month: 11, day: 04, hour: 00, minute: 36, action: Action::Sleep },
+        Record { month: 11, day: 04, hour: 00, minute: 46, action: Action::Awake },
+        Record { month: 11, day: 05, hour: 00, minute: 03, action: Action::Begin { guard_id: 99 } },
+        Record { month: 11, day: 05, hour: 00, minute: 45, action: Action::Sleep },
+        Record { month: 11, day: 05, hour: 00, minute: 55, action: Action::Awake },
+    ];
+
     #[test]
     fn test_parse_input() {
-        let result = vec![
-            Record { month: 11, day: 01, hour: 00, minute: 00, action: Action::Begin { guard_id: 10 } },
-            Record { month: 11, day: 01, hour: 00, minute: 05, action: Action::Sleep },
-            Record { month: 11, day: 01, hour: 00, minute: 25, action: Action::Awake },
-            Record { month: 11, day: 01, hour: 00, minute: 30, action: Action::Sleep },
-            Record { month: 11, day: 01, hour: 00, minute: 55, action: Action::Awake },
-            Record { month: 11, day: 01, hour: 23, minute: 58, action: Action::Begin { guard_id: 99 } },
-            Record { month: 11, day: 02, hour: 00, minute: 40, action: Action::Sleep },
-            Record { month: 11, day: 02, hour: 00, minute: 50, action: Action::Awake },
-            Record { month: 11, day: 03, hour: 00, minute: 05, action: Action::Begin { guard_id: 10 } },
-            Record { month: 11, day: 03, hour: 00, minute: 24, action: Action::Sleep },
-            Record { month: 11, day: 03, hour: 00, minute: 29, action: Action::Awake },
-            Record { month: 11, day: 04, hour: 00, minute: 02, action: Action::Begin { guard_id: 99 } },
-            Record { month: 11, day: 04, hour: 00, minute: 36, action: Action::Sleep },
-            Record { month: 11, day: 04, hour: 00, minute: 46, action: Action::Awake },
-            Record { month: 11, day: 05, hour: 00, minute: 03, action: Action::Begin { guard_id: 99 } },
-            Record { month: 11, day: 05, hour: 00, minute: 45, action: Action::Sleep },
-            Record { month: 11, day: 05, hour: 00, minute: 55, action: Action::Awake },
-        ];
-
-        assert_eq!(parse_input(TEST_DATA), result);
+        assert_eq!(parse_input(TEST_INPUT_DATA), TEST_INPUT_RESULT);
     }
 }
