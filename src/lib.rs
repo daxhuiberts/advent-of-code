@@ -1,9 +1,11 @@
 extern crate itertools;
 extern crate regex;
+extern crate chrono;
 
 extern crate aoc_runner;
 #[macro_use]
 extern crate aoc_runner_derive;
+
 #[cfg(test)]
 extern crate indoc;
 #[cfg(test)]
