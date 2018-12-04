@@ -10,6 +10,7 @@ enum Action {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Record {
+    month: usize,
     day: usize,
     hour: usize,
     minute: usize,
@@ -18,7 +19,7 @@ pub struct Record {
 
 #[aoc_generator(day4)]
 pub fn parse_input(input: &str) -> Vec<Record> {
-    let regex_line = Regex::new(r"\A\[1518-11-(\d\d) (23|00):(\d\d)\] (.+)\z").unwrap();
+    let regex_line = Regex::new(r"\A\[1518-(\d\d)-(\d\d) (23|00):(\d\d)\] (.+)\z").unwrap();
     let regex_action_begin = Regex::new(r"\AGuard #(\d+) begins shift\z").unwrap();
 
     let mut lines = input.lines().collect_vec();
@@ -27,10 +28,11 @@ pub fn parse_input(input: &str) -> Vec<Record> {
     lines.iter().map(|line| {
         let captures = regex_line.captures(line).unwrap();
 
-        let day = captures.get(1).unwrap().as_str().parse().unwrap();
-        let hour = captures.get(2).unwrap().as_str().parse().unwrap();
-        let minute = captures.get(3).unwrap().as_str().parse().unwrap();
-        let action_str = captures.get(4).unwrap().as_str();
+        let month = captures.get(1).unwrap().as_str().parse().unwrap();
+        let day = captures.get(2).unwrap().as_str().parse().unwrap();
+        let hour = captures.get(3).unwrap().as_str().parse().unwrap();
+        let minute = captures.get(4).unwrap().as_str().parse().unwrap();
+        let action_str = captures.get(5).unwrap().as_str();
 
         let action = regex_action_begin.captures(action_str).map(|captures| {
                 let guard_id = captures.get(1).unwrap().as_str().parse().unwrap();
@@ -43,7 +45,7 @@ pub fn parse_input(input: &str) -> Vec<Record> {
                 }
             });
 
-        Record { day, hour, minute, action }
+        Record { month, day, hour, minute, action }
     }).collect_vec()
 }
 
@@ -76,23 +78,23 @@ mod test {
     #[test]
     fn test_parse_input() {
         let result = vec![
-            Record { day: 01, hour: 00, minute: 00, action: Action::Begin { guard_id: 10 } },
-            Record { day: 01, hour: 00, minute: 05, action: Action::Sleep },
-            Record { day: 01, hour: 00, minute: 25, action: Action::Awake },
-            Record { day: 01, hour: 00, minute: 30, action: Action::Sleep },
-            Record { day: 01, hour: 00, minute: 55, action: Action::Awake },
-            Record { day: 01, hour: 23, minute: 58, action: Action::Begin { guard_id: 99 } },
-            Record { day: 02, hour: 00, minute: 40, action: Action::Sleep },
-            Record { day: 02, hour: 00, minute: 50, action: Action::Awake },
-            Record { day: 03, hour: 00, minute: 05, action: Action::Begin { guard_id: 10 } },
-            Record { day: 03, hour: 00, minute: 24, action: Action::Sleep },
-            Record { day: 03, hour: 00, minute: 29, action: Action::Awake },
-            Record { day: 04, hour: 00, minute: 02, action: Action::Begin { guard_id: 99 } },
-            Record { day: 04, hour: 00, minute: 36, action: Action::Sleep },
-            Record { day: 04, hour: 00, minute: 46, action: Action::Awake },
-            Record { day: 05, hour: 00, minute: 03, action: Action::Begin { guard_id: 99 } },
-            Record { day: 05, hour: 00, minute: 45, action: Action::Sleep },
-            Record { day: 05, hour: 00, minute: 55, action: Action::Awake },
+            Record { month: 11, day: 01, hour: 00, minute: 00, action: Action::Begin { guard_id: 10 } },
+            Record { month: 11, day: 01, hour: 00, minute: 05, action: Action::Sleep },
+            Record { month: 11, day: 01, hour: 00, minute: 25, action: Action::Awake },
+            Record { month: 11, day: 01, hour: 00, minute: 30, action: Action::Sleep },
+            Record { month: 11, day: 01, hour: 00, minute: 55, action: Action::Awake },
+            Record { month: 11, day: 01, hour: 23, minute: 58, action: Action::Begin { guard_id: 99 } },
+            Record { month: 11, day: 02, hour: 00, minute: 40, action: Action::Sleep },
+            Record { month: 11, day: 02, hour: 00, minute: 50, action: Action::Awake },
+            Record { month: 11, day: 03, hour: 00, minute: 05, action: Action::Begin { guard_id: 10 } },
+            Record { month: 11, day: 03, hour: 00, minute: 24, action: Action::Sleep },
+            Record { month: 11, day: 03, hour: 00, minute: 29, action: Action::Awake },
+            Record { month: 11, day: 04, hour: 00, minute: 02, action: Action::Begin { guard_id: 99 } },
+            Record { month: 11, day: 04, hour: 00, minute: 36, action: Action::Sleep },
+            Record { month: 11, day: 04, hour: 00, minute: 46, action: Action::Awake },
+            Record { month: 11, day: 05, hour: 00, minute: 03, action: Action::Begin { guard_id: 99 } },
+            Record { month: 11, day: 05, hour: 00, minute: 45, action: Action::Sleep },
+            Record { month: 11, day: 05, hour: 00, minute: 55, action: Action::Awake },
         ];
 
         assert_eq!(parse_input(TEST_DATA), result);
