@@ -23,10 +23,7 @@ fn parse_input_step1(input: &str) -> Vec<Record> {
     let regex_line = Regex::new(r"\A\[(\d{4}-\d{2}-\d{2}) (23|00):(\d\d)\] (.+)\z").unwrap();
     let regex_action_begin = Regex::new(r"\AGuard #(\d+) begins shift\z").unwrap();
 
-    let mut lines = input.lines().collect_vec();
-    lines.sort();
-
-    lines.iter().map(|line| {
+    input.lines().sorted().iter().map(|line| {
         let captures = regex_line.captures(line).unwrap();
 
         let date = NaiveDate::parse_from_str(captures.get(1).unwrap().as_str(), "%Y-%m-%d").unwrap();
