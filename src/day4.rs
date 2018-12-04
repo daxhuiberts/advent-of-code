@@ -119,6 +119,18 @@ pub fn part1(input: &[Shift]) -> usize {
     sleepiest_guard.0 * *sleepiest_minute
 }
 
+#[aoc(day4, part2)]
+pub fn part2(input: &[Shift]) -> usize {
+    let data = get_guards_with_sleepy_minutes(input);
+
+    let (guard, minute, _) = data.iter().map(|(guard, sleepy_minutes)| {
+        let (minute, sleep_count) = sleepy_minutes.iter().max_by_key(|(_minute, sleep_count)| *sleep_count).unwrap_or((&0, &0));
+        (guard, minute, sleep_count)
+    }).max_by_key(|(_guard, _minute, sleep_count)| *sleep_count).unwrap();
+
+    guard.0 * minute
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -197,5 +209,10 @@ mod test {
     #[test]
     fn test_part1() {
         assert_eq!(part1(&*TEST_INPUT_RESULT), 240);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(&*TEST_INPUT_RESULT), 4455);
     }
 }
