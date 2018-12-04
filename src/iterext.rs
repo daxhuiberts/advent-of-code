@@ -21,6 +21,16 @@ pub trait IterExt : Iterator {
         })
     }
 
+    fn fold_to_map<K, V, F>(self, mut f: F) -> HashMap<K, V>
+        where Self: Sized,
+              K: Eq + Hash,
+              F: FnMut(&mut HashMap<K, V>, Self::Item)
+    {
+        self.fold_ref(HashMap::new(), |mut acc, item| {
+            f(&mut acc, item)
+        })
+    }
+
     fn grouped<K, F>(self, mut f: F) -> HashMap<K, Vec<Self::Item>>
         where Self: Sized,
               F: FnMut(&Self::Item) -> K,

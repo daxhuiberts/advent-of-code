@@ -96,20 +96,24 @@ pub fn parse_input(input: &str) -> Vec<Shift> {
     parse_input_step2(&parse_input_step1(input))
 }
 
+fn get_guards_with_sleepy_minutes(input: &[Shift]) -> HashMap<Guard, HashMap<usize, usize>> {
+    input.iter().grouped(|item| item.guard_id).iter().fold_to_map(|map, (guard, shifts)| {
+        let sleepy_minutes = shifts.iter().flat_map(|shifts| {
+            shifts.asleep.iter().flat_map(|period| period.begin..period.end)
+        }).group_count();
+        map.insert(*guard, sleepy_minutes);
+    })
+}
+
 #[aoc(day4, part1)]
 pub fn part1(input: &[Shift]) -> usize {
-    let grouped_shifts = input.iter().grouped(|item| item.guard_id);
+    let data = get_guards_with_sleepy_minutes(input);
 
-    let sleepiest_guard = grouped_shifts.iter().max_by_key(|(_guard_id, shifts)|
-        shifts.iter().map(|shift|
-            shift.asleep.iter().map(|period| period.end - period.begin).sum::<usize>()
-        ).sum::<usize>()
+    let sleepiest_guard = data.iter().max_by_key(|(_guard_id, sleepy_minutes)|
+        sleepy_minutes.values().sum::<usize>()
     ).unwrap().0;
 
-    let sleepy_minutes: HashMap<usize, usize> = grouped_shifts.get(sleepiest_guard).unwrap().iter().flat_map(|shifts| {
-        shifts.asleep.iter().flat_map(|period| period.begin..period.end)
-    }).group_count();
-
+    let sleepy_minutes = data.get(sleepiest_guard).unwrap();
     let sleepiest_minute = sleepy_minutes.iter().max_by_key(|(_minute, sleep_count)| *sleep_count).unwrap().0;
 
     sleepiest_guard.0 * *sleepiest_minute
