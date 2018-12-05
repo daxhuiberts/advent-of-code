@@ -1,6 +1,15 @@
 #[aoc(day1, part1)]
 pub fn part1(input: &str) -> i32 {
-    input.trim().chars().map(|char| if char == '(' { 1 } else { -1 }).sum()
+    floor_iterator(input).last().unwrap()
+}
+
+fn floor_iterator<'a>(input: &'a str) -> impl Iterator<Item=i32> + 'a {
+    input.trim().chars().map(|char|
+        if char == '(' { 1 } else { -1 }
+    ).scan(0, |state, change| {
+        *state = *state + change;
+        Some(*state)
+    })
 }
 
 #[test]
