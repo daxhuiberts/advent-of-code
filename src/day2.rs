@@ -19,13 +19,16 @@ pub fn part2(input: &[(u32, u32, u32)]) -> u32 {
 
 fn wrapping_paper((length, width, height): (u32, u32, u32)) -> u32 {
     let (lw, lh, wh) = (length * width, length * height, width * height);
-    lw * 2 + lh * 2 + wh * 2 + std::cmp::min(std::cmp::min(lw, lh), wh)
+    lw * 2 + lh * 2 + wh * 2 + min3(lw, lh, wh)
 }
 
 fn ribbon((length, width, height): (u32, u32, u32)) -> u32 {
-    let (lw, lh, wh) = (length + width, length + height, width + height);
-    let smallest = std::cmp::min(std::cmp::min(lw, lh), wh);
+    let smallest = min3(length + width, length + height, width + height);
     smallest * 2 + length * width * height
+}
+
+fn min3<T: Ord>(a: T, b: T, c: T) -> T {
+    std::cmp::min(std::cmp::min(a, b), c)
 }
 
 #[test]
