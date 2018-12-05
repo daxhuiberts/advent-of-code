@@ -12,9 +12,20 @@ pub fn part1(input: &[(u32, u32, u32)]) -> u32 {
     input.iter().map(|lwh| wrapping_paper(*lwh)).sum()
 }
 
+#[aoc(day2, part2)]
+pub fn part2(input: &[(u32, u32, u32)]) -> u32 {
+    input.iter().map(|lwh| ribbon(*lwh)).sum()
+}
+
 fn wrapping_paper((length, width, height): (u32, u32, u32)) -> u32 {
     let (lw, lh, wh) = (length * width, length * height, width * height);
     lw * 2 + lh * 2 + wh * 2 + std::cmp::min(std::cmp::min(lw, lh), wh)
+}
+
+fn ribbon((length, width, height): (u32, u32, u32)) -> u32 {
+    let (lw, lh, wh) = (length + width, length + height, width + height);
+    let smallest = std::cmp::min(std::cmp::min(lw, lh), wh);
+    smallest * 2 + length * width * height
 }
 
 #[test]
@@ -28,7 +39,18 @@ fn test_part1() {
 }
 
 #[test]
+fn test_part2() {
+    assert_eq!(part2(&[(2, 3, 4), (1, 1, 10)]), 48);
+}
+
+#[test]
 fn test_wrapping_paper() {
     assert_eq!(wrapping_paper((2, 3, 4)), 58);
     assert_eq!(wrapping_paper((1, 1, 10)), 43);
+}
+
+#[test]
+fn test_ribbon() {
+    assert_eq!(ribbon((2, 3, 4)), 34);
+    assert_eq!(ribbon((1, 1, 10)), 14);
 }
