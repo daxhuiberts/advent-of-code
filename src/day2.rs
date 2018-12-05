@@ -1,12 +1,10 @@
+use itertools::Itertools;
+
 #[aoc_generator(day2)]
 pub fn parse_input(input: &str) -> Vec<(u32, u32, u32)> {
-    input.lines().map(|line| {
-        let mut dimensions = line.split('x');
-        let length = dimensions.next().unwrap().parse().unwrap();
-        let width = dimensions.next().unwrap().parse().unwrap();
-        let height = dimensions.next().unwrap().parse().unwrap();
-        (length, width, height)
-    }).collect()
+    input.lines().map(|line|
+        line.split('x').map(|x| x.parse().unwrap()).collect_tuple().unwrap()
+    ).collect()
 }
 
 #[test]
