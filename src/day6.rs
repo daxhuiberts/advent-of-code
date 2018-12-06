@@ -15,7 +15,7 @@ pub fn part1(input: &[(usize, usize)]) -> usize {
     let (x, y): (Vec<usize>, Vec<usize>) = input.iter().cloned().unzip();
     let (max_x, max_y) = (x.into_iter().max().unwrap(), y.into_iter().max().unwrap());
 
-    println!("max: ({}, {})", max_x, max_y);
+    // println!("max: ({}, {})", max_x, max_y);
 
     let data: Vec<(usize, Option<usize>)> = (0..=max_y).cartesian_product(0..=max_x).map(|(y, x)| {
         get_settler((x, y), input)
@@ -25,29 +25,30 @@ pub fn part1(input: &[(usize, usize)]) -> usize {
         x == 0 || x == max_x || y == 0 || y == max_y
     ).collect();
 
-    println!("edge positions: {:?}", edge_positions);
+    // println!("edge positions: {:?}", edge_positions);
 
     let exclude_indexes: HashSet<usize> = data.iter().enumerate().filter(|(position, _)|
         edge_positions.contains(position)
     ).filter_map(|(_, (_score, some_index))| *some_index).unique().collect();
 
-    println!("exclude indexes: {:?}", exclude_indexes);
+    // println!("exclude indexes: {:?}", exclude_indexes);
 
-    for row in data.chunks(max_x + 1) {
-        for cell in row {
-            let output = match cell {
-                (_, Some(x)) => format!("{}", x),
-                (_, None) => ".".to_string(),
-            };
-            print!("{}", output);
-        }
-        println!("");
-    }
+    // for row in data.chunks(max_x + 1) {
+    //     for cell in row {
+    //         let output = match cell {
+    //             (_, Some(x)) => format!("{}", x),
+    //             (_, None) => ".".to_string(),
+    //         };
+    //         print!("{}", output);
+    //     }
+    //     println!("");
+    // }
 
     let index_scores = data.iter().filter_map(|(_score, some_index)| *some_index).filter(|index|
         !exclude_indexes.contains(index)
     ).group_count();
-    println!("{:?}", index_scores);
+
+    // println!("{:?}", index_scores);
 
     *index_scores.values().max().unwrap()
 }
