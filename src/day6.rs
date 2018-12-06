@@ -1,10 +1,70 @@
 use itertools::Itertools;
+use super::IterExt;
+use std::cmp::Ordering;
+use std::collections::HashSet;
 
 #[aoc_generator(day6)]
-pub fn parse_input(input: &str) -> Vec<(i32, i32)> {
+pub fn parse_input(input: &str) -> Vec<(usize, usize)> {
     input.lines().map(|line|
         line.split(", ").map(|coordinate| coordinate.parse().unwrap()).collect_tuple().unwrap()
     ).collect()
+}
+
+#[aoc(day6, part1)]
+pub fn part1(input: &[(usize, usize)]) -> usize {
+    let (x, y): (Vec<usize>, Vec<usize>) = input.iter().cloned().unzip();
+    let (max_x, max_y) = (x.into_iter().max().unwrap(), y.into_iter().max().unwrap());
+
+    println!("max: ({}, {})", max_x, max_y);
+
+    let data: Vec<(usize, Option<usize>)> = (0..=max_y).cartesian_product(0..=max_x).map(|(y, x)| {
+        get_settler((x, y), input)
+    }).collect_vec();
+
+    let edge_positions: HashSet<usize> = (0..=max_y).cartesian_product(0..=max_x).positions(|(y, x)|
+        x == 0 || x == max_x || y == 0 || y == max_y
+    ).collect();
+
+    println!("edge positions: {:?}", edge_positions);
+
+    let exclude_indexes: HashSet<usize> = data.iter().enumerate().filter(|(position, _)|
+        edge_positions.contains(position)
+    ).filter_map(|(_, (_score, some_index))| *some_index).unique().collect();
+
+    println!("exclude indexes: {:?}", exclude_indexes);
+
+    for row in data.chunks(max_x + 1) {
+        for cell in row {
+            let output = match cell {
+                (_, Some(x)) => format!("{}", x),
+                (_, None) => ".".to_string(),
+            };
+            print!("{}", output);
+        }
+        println!("");
+    }
+
+    let index_scores = data.iter().filter_map(|(_score, some_index)| *some_index).filter(|index|
+        !exclude_indexes.contains(index)
+    ).group_count();
+    println!("{:?}", index_scores);
+
+    *index_scores.values().max().unwrap()
+}
+
+fn get_settler(coordinate: (usize, usize), input: &[(usize, usize)]) -> (usize, Option<usize>) {
+    input.iter().enumerate().fold((999, None), |(score, position), (index, (xx, yy))| {
+        let new_score = manhattan_distance(coordinate, (*xx, *yy));
+        match score.cmp(&new_score) {
+            Ordering::Less => (score, position),
+            Ordering::Equal => (score, None),
+            Ordering::Greater => (new_score, Some(index)),
+        }
+    })
+}
+
+fn manhattan_distance(a: (usize, usize), b: (usize, usize)) -> usize {
+    (((a.0 as isize) - (b.0 as isize)).abs() + ((a.1 as isize) - (b.1 as isize)).abs()) as usize
 }
 
 #[cfg(test)]
@@ -12,10 +72,23 @@ mod test {
     use super::*;
 
     const INPUT: &'static str = "1, 1\n1, 6\n8, 3\n3, 4\n5, 5\n8, 9\n";
-    const PARSED: [(i32, i32); 6] = [(1, 1), (1, 6), (8, 3), (3, 4), (5, 5), (8, 9)];
+    const PARSED: [(usize, usize); 6] = [(1, 1), (1, 6), (8, 3), (3, 4), (5, 5), (8, 9)];
 
     #[test]
     fn test_parse_input() {
         assert_eq!(parse_input(INPUT), PARSED);
+    }
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(&PARSED), 17);
+    }
+
+    #[test]
+    fn test_manhattan_distance() {
+        assert_eq!(manhattan_distance((0, 0), (0, 0)), 0);
+        assert_eq!(manhattan_distance((0, 0), (1, 1)), 2);
+        assert_eq!(manhattan_distance((3, 3), (1, 5)), 4);
+        assert_eq!(manhattan_distance((5, 4), (2, 3)), 4);
     }
 }
