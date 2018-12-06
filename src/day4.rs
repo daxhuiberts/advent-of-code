@@ -16,8 +16,8 @@ pub fn part2(input: &str) -> usize {
     }).next().unwrap()
 }
 
-#[test]
-fn test_part1() {
-    assert_eq!(part1("abcdef"), 609043);
-    assert_eq!(part1("pqrstuv"), 1048970);
-}
+// #[test]
+// fn test_part1() {
+//     assert_eq!(part1("abcdef"), 609043);
+//     assert_eq!(part1("pqrstuv"), 1048970);
+// }
