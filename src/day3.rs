@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 use itertools::Itertools;
-use iterext::IterExt;
+use aoctools::IterExt;
 
 #[aoc(day3, part1)]
 pub fn part1(input: &str) -> usize {

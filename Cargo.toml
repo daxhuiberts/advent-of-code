@@ -6,4 +6,5 @@ authors = ["Dax Huiberts <daxhuiberts@gmail.com>"]
 [dependencies]
 aoc-runner = "*"
 aoc-runner-derive = "*"
+aoctools = { git = "https://github.com/daxhuiberts/aoctools" }
 itertools = "*"
