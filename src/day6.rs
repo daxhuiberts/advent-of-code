@@ -53,6 +53,22 @@ pub fn part1(input: &[(usize, usize)]) -> usize {
     *index_scores.values().max().unwrap()
 }
 
+#[aoc(day6, part2)]
+pub fn part2(input: &[(usize, usize)]) -> usize {
+    part2_inner(input, 10_000)
+}
+
+fn part2_inner(input: &[(usize, usize)], threshold: usize) -> usize {
+    let (x, y): (Vec<usize>, Vec<usize>) = input.iter().cloned().unzip();
+    let (max_x, max_y) = (x.into_iter().max().unwrap(), y.into_iter().max().unwrap());
+
+    (0..=max_y).cartesian_product(0..=max_x).map(|(y, x)| {
+        input.iter().map(|(xx, yy)| {
+            manhattan_distance((x, y), (*xx, *yy))
+        }).sum::<usize>()
+    }).filter(|total_distance| *total_distance < threshold).count()
+}
+
 fn get_settler(coordinate: (usize, usize), input: &[(usize, usize)]) -> (usize, Option<usize>) {
     input.iter().enumerate().fold((999, None), |(score, position), (index, (xx, yy))| {
         let new_score = manhattan_distance(coordinate, (*xx, *yy));
@@ -83,6 +99,11 @@ mod test {
     #[test]
     fn test_part1() {
         assert_eq!(part1(&PARSED), 17);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2_inner(&PARSED, 30), 16);
     }
 
     #[test]
