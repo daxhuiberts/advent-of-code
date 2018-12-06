@@ -103,7 +103,7 @@ mod test {
 
     #[test]
     fn test_part2() {
-        assert_eq!(part2_inner(&PARSED, 30), 16);
+        assert_eq!(part2_inner(&PARSED, 32), 16);
     }
 
     #[test]
