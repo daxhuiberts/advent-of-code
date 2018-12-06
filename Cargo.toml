@@ -8,3 +8,4 @@ aoc-runner = "*"
 aoc-runner-derive = "*"
 aoctools = { git = "https://github.com/daxhuiberts/aoctools" }
 itertools = "*"
+md5 = "*"
