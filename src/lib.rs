@@ -1,4 +1,5 @@
 extern crate itertools;
+extern crate aoctools;
 extern crate regex;
 extern crate chrono;
 
@@ -12,15 +13,11 @@ extern crate indoc;
 #[macro_use]
 extern crate lazy_static;
 
-pub mod iterext;
-
 pub mod day1;
 pub mod day2;
 pub mod day3;
 pub mod day4;
 pub mod day5;
 pub mod day6;
-
-use iterext::IterExt;
 
 aoc_lib!{ year = 2018 }

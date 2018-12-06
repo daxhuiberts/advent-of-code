@@ -9,6 +9,7 @@ regex = "*"
 chrono = "*"
 aoc-runner = "*"
 aoc-runner-derive = "*"
+aoctools = { git = "https://github.com/daxhuiberts/aoctools" }
 
 [dev-dependencies]
 indoc = "*"

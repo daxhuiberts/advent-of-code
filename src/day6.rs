@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use super::IterExt;
+use aoctools::IterExt;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 

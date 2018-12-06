@@ -1,5 +1,5 @@
-use super::IterExt;
-use super::itertools::Itertools;
+use aoctools::IterExt;
+use itertools::Itertools;
 
 #[aoc(day2, part1)]
 pub fn part1(input: &str) -> usize {

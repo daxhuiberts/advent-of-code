@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use regex::Regex;
 use itertools::Itertools;
-use super::IterExt;
+use aoctools::IterExt;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Claim {
