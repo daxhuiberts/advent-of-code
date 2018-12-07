@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use itertools::Itertools;
 
 #[aoc_generator(day7)]
@@ -5,6 +6,26 @@ pub fn parse_input(input: &str) -> Vec<(char, char)> {
     input.lines().map(|line|
         line.chars().skip(1).filter(|char| char.is_ascii_uppercase()).collect_tuple().unwrap()
     ).collect()
+}
+
+#[aoc(day7, part1)]
+pub fn part1(input: &[(char, char)]) -> String {
+    let mut prerequisites: HashMap<char, Vec<char>> = HashMap::new();
+
+    for (before, after) in input {
+        prerequisites.entry(*before).or_default();
+        prerequisites.entry(*after).or_default().push(*before);
+    };
+
+    let mut result = String::new();
+
+    while let Some(char) = prerequisites.iter().filter(|(char, char_prerequisites)| {
+        !result.contains(**char) && char_prerequisites.iter().all(|dep_char| result.contains(*dep_char))
+    }).map(|x|x.0).sorted().first() {
+        result.push(**char);
+    }
+
+    result
 }
 
 #[cfg(test)]
