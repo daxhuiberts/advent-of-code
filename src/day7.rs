@@ -27,13 +27,17 @@ pub fn parse_input_step2(input: &[(char, char)]) -> HashMap<char, Vec<char>> {
 pub fn part1(prerequisites: &HashMap<char, Vec<char>>) -> String {
     let mut result = String::new();
 
-    while let Some(char) = prerequisites.iter().filter(|(char, char_prerequisites)| {
-        !result.contains(**char) && char_prerequisites.iter().all(|dep_char| result.contains(*dep_char))
-    }).map(|x|x.0).sorted().first() {
-        result.push(**char);
+    while let Some(char) = get_next(prerequisites, &result) {
+        result.push(char);
     }
 
     result
+}
+
+fn get_next(prerequisites: &HashMap<char, Vec<char>>, done: &str) -> Option<char> {
+    prerequisites.iter().filter(|(char, char_prerequisites)| {
+        !done.contains(**char) && char_prerequisites.iter().all(|dep_char| done.contains(*dep_char))
+    }).map(|x|*x.0).sorted().first().cloned()
 }
 
 #[cfg(test)]
