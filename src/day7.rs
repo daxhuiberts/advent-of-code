@@ -1,9 +1,9 @@
 use itertools::Itertools;
 
 #[aoc_generator(day7)]
-pub fn parse_input(input: &str) -> Vec<(u8, u8)> {
+pub fn parse_input(input: &str) -> Vec<(char, char)> {
     input.lines().map(|line|
-        line.bytes().skip(1).filter(|char| char.is_ascii_uppercase()).collect_tuple().unwrap()
+        line.chars().skip(1).filter(|char| char.is_ascii_uppercase()).collect_tuple().unwrap()
     ).collect()
 }
 
@@ -23,13 +23,18 @@ mod test {
     ");
 
     lazy_static! {
-        static ref TEST_INPUT_RESULT: Vec<(u8, u8)> = {
-            vec![(b'C', b'A'), (b'C', b'F'), (b'A', b'B'), (b'A', b'D'), (b'B', b'E'), (b'D', b'E'), (b'F', b'E')]
+        static ref TEST_INPUT_RESULT: Vec<(char, char)> = {
+            vec![('C', 'A'), ('C', 'F'), ('A', 'B'), ('A', 'D'), ('B', 'E'), ('D', 'E'), ('F', 'E')]
         };
     }
 
     #[test]
     fn test_parse_input() {
         assert_eq!(parse_input(TEST_INPUT), *TEST_INPUT_RESULT);
+    }
+
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(&*TEST_INPUT_RESULT), "CABDFE");
     }
 }
