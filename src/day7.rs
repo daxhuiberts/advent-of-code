@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use itertools::Itertools;
+use std::collections::HashMap;
 
 #[aoc_generator(day7)]
 pub fn parse_input(input: &str) -> Box<HashMap<char, Vec<char>>> {
@@ -7,9 +7,16 @@ pub fn parse_input(input: &str) -> Box<HashMap<char, Vec<char>>> {
 }
 
 pub fn parse_input_step1(input: &str) -> Vec<(char, char)> {
-    input.lines().map(|line|
-        line.chars().skip(1).filter(|char| char.is_ascii_uppercase()).collect_tuple().unwrap()
-    ).collect()
+    input
+        .lines()
+        .map(|line| {
+            line.chars()
+                .skip(1)
+                .filter(|char| char.is_ascii_uppercase())
+                .collect_tuple()
+                .unwrap()
+        })
+        .collect()
 }
 
 pub fn parse_input_step2(input: &[(char, char)]) -> HashMap<char, Vec<char>> {
@@ -18,7 +25,7 @@ pub fn parse_input_step2(input: &[(char, char)]) -> HashMap<char, Vec<char>> {
     for (before, after) in input {
         prerequisites.entry(*before).or_default();
         prerequisites.entry(*after).or_default().push(*before);
-    };
+    }
 
     prerequisites
 }
@@ -42,35 +49,51 @@ pub fn part2(prerequisites: &HashMap<char, Vec<char>>) -> String {
 type Workers = Vec<Option<(char, usize)>>;
 
 fn part2_inner(prerequisites: &HashMap<char, Vec<char>>, workers: usize, delay: usize) -> String {
-    (0..).take(1200).fold((vec![None; workers], String::new()), |(workers, mut result): (Workers, String), _second| {
-        // println!("{}: {:?} -- {}", second, workers, result);
+    (0..)
+        .take(1200)
+        .fold(
+            (vec![None; workers], String::new()),
+            |(workers, mut result): (Workers, String), _second| {
+                // println!("{}: {:?} -- {}", second, workers, result);
 
-        let workers2: Workers = workers.iter().map(|x| {
-            x.and_then(|(char, sec)| {
-                if sec == 1 {
-                    result.push(char);
-                    None
-                } else {
-                    Some((char, sec - 1))
-                }
-            })
-        }).collect_vec();
+                let workers2: Workers = workers
+                    .iter()
+                    .map(|x| {
+                        x.and_then(|(char, sec)| {
+                            if sec == 1 {
+                                result.push(char);
+                                None
+                            } else {
+                                Some((char, sec - 1))
+                            }
+                        })
+                    })
+                    .collect_vec();
 
-        let exclude: String = workers2.iter().filter_map(|x| *x).map(|(char, _sec)| char).collect();
-        let new_workers = workers2.iter().scan(exclude, |exclude, worker| {
-            let res: Option<(char, usize)> = worker.or_else(||
-                get_next(prerequisites, &result, &exclude).map(|new_char| {
-                    exclude.push(new_char);
-                    (new_char, get_seconds(new_char) + delay)
-                })
-            );
-            Some(res)
-        }).collect_vec();
+                let exclude: String = workers2
+                    .iter()
+                    .filter_map(|x| *x)
+                    .map(|(char, _sec)| char)
+                    .collect();
+                let new_workers = workers2
+                    .iter()
+                    .scan(exclude, |exclude, worker| {
+                        let res: Option<(char, usize)> = worker.or_else(|| {
+                            get_next(prerequisites, &result, &exclude).map(|new_char| {
+                                exclude.push(new_char);
+                                (new_char, get_seconds(new_char) + delay)
+                            })
+                        });
+                        Some(res)
+                    })
+                    .collect_vec();
 
-        // println!("{}: {:?} -- {}", second, new_workers, result);
+                // println!("{}: {:?} -- {}", second, new_workers, result);
 
-        (new_workers, result)
-    }).1
+                (new_workers, result)
+            },
+        )
+        .1
 }
 
 fn get_seconds(char: char) -> usize {
@@ -79,10 +102,19 @@ fn get_seconds(char: char) -> usize {
 
 fn get_next(prerequisites: &HashMap<char, Vec<char>>, done: &str, exclude: &str) -> Option<char> {
     // println!("done: {}; exclude: {}", done, exclude);
-    prerequisites.iter().filter(|(char, char_prerequisites)| {
-        !done.contains(**char) && !exclude.contains(**char) &&
-            char_prerequisites.iter().all(|dep_char| done.contains(*dep_char))
-    }).map(|x|*x.0).sorted().first().cloned()
+    prerequisites
+        .iter()
+        .filter(|(char, char_prerequisites)| {
+            !done.contains(**char)
+                && !exclude.contains(**char)
+                && char_prerequisites
+                    .iter()
+                    .all(|dep_char| done.contains(*dep_char))
+        })
+        .map(|x| *x.0)
+        .sorted()
+        .first()
+        .cloned()
 }
 
 #[cfg(test)]
@@ -90,7 +122,8 @@ mod test {
     use super::*;
     use indoc::indoc;
 
-    const TEST_INPUT: &'static str = indoc!("
+    const TEST_INPUT: &'static str = indoc!(
+        "
         Step C must be finished before step A can begin.
         Step C must be finished before step F can begin.
         Step A must be finished before step B can begin.
@@ -98,13 +131,21 @@ mod test {
         Step B must be finished before step E can begin.
         Step D must be finished before step E can begin.
         Step F must be finished before step E can begin.
-    ");
+    "
+    );
 
     lazy_static! {
         static ref TEST_INPUT_INTERMEDIATE_RESULT: Vec<(char, char)> = {
-            vec![('C', 'A'), ('C', 'F'), ('A', 'B'), ('A', 'D'), ('B', 'E'), ('D', 'E'), ('F', 'E')]
+            vec![
+                ('C', 'A'),
+                ('C', 'F'),
+                ('A', 'B'),
+                ('A', 'D'),
+                ('B', 'E'),
+                ('D', 'E'),
+                ('F', 'E'),
+            ]
         };
-
         static ref TEST_INPUT_RESULT: HashMap<char, Vec<char>> = {
             let mut map = HashMap::new();
             map.insert('A', vec!['C']);
@@ -124,12 +165,18 @@ mod test {
 
     #[test]
     fn test_parse_input_step1() {
-        assert_eq!(parse_input_step1(TEST_INPUT), *TEST_INPUT_INTERMEDIATE_RESULT);
+        assert_eq!(
+            parse_input_step1(TEST_INPUT),
+            *TEST_INPUT_INTERMEDIATE_RESULT
+        );
     }
 
     #[test]
     fn test_parse_input_step2() {
-        assert_eq!(parse_input_step2(&*TEST_INPUT_INTERMEDIATE_RESULT), *TEST_INPUT_RESULT);
+        assert_eq!(
+            parse_input_step2(&*TEST_INPUT_INTERMEDIATE_RESULT),
+            *TEST_INPUT_RESULT
+        );
     }
 
     #[test]

@@ -13,7 +13,10 @@ pub fn part1(input: &[i32]) -> i32 {
 #[aoc(day1, part2)]
 pub fn part2(input: &[i32]) -> i32 {
     let iterator = std::iter::once(&0).chain(input.iter().cycle());
-    let cumulated = iterator.scan(0, |state, value| { *state += value; Some(*state) });
+    let cumulated = iterator.scan(0, |state, value| {
+        *state += value;
+        Some(*state)
+    });
     let duplicates = cumulated.scan(HashSet::new(), |set, value| Some(set.replace(value)));
     duplicates.filter_map(|value| value).next().unwrap()
 }

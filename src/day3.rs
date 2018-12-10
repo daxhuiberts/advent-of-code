@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-use regex::Regex;
-use itertools::Itertools;
 use aoctools::IterExt;
+use itertools::Itertools;
+use regex::Regex;
+use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Claim {
@@ -16,20 +16,25 @@ pub struct Claim {
 pub fn parse_input(input: &str) -> Vec<Claim> {
     let regex = Regex::new(r"\A#(\d+) @ (\d+),(\d+): (\d+)x(\d+)\z").unwrap();
 
-    input.lines().map(|line| {
-        let captures = regex.captures(line).unwrap();
-        let values: Vec<_> = captures.iter().skip(1).map(|capture|
-            capture.unwrap().as_str().parse().unwrap()
-        ).collect();
+    input
+        .lines()
+        .map(|line| {
+            let captures = regex.captures(line).unwrap();
+            let values: Vec<_> = captures
+                .iter()
+                .skip(1)
+                .map(|capture| capture.unwrap().as_str().parse().unwrap())
+                .collect();
 
-        Claim {
-            id: values[0],
-            xoffset: values[1],
-            yoffset: values[2],
-            width: values[3],
-            height: values[4],
-        }
-    }).collect()
+            Claim {
+                id: values[0],
+                xoffset: values[1],
+                yoffset: values[2],
+                width: values[3],
+                height: values[4],
+            }
+        })
+        .collect()
 }
 
 #[aoc(day3, part1)]
@@ -41,18 +46,21 @@ pub fn part1(input: &[Claim]) -> usize {
 #[aoc(day3, part2)]
 pub fn part2(input: &[Claim]) -> usize {
     let map = input_to_map(input);
-    input.iter().find(|claim| {
-        get_positions(claim).all(|(x, y)|
-            *map.get(&(x, y)).unwrap() == 1
-        )
-    }).unwrap().id
+    input
+        .iter()
+        .find(|claim| get_positions(claim).all(|(x, y)| *map.get(&(x, y)).unwrap() == 1))
+        .unwrap()
+        .id
 }
 
 fn input_to_map(input: &[Claim]) -> HashMap<(usize, usize), usize> {
-    input.iter().flat_map(|claim| get_positions(&claim)).group_count()
+    input
+        .iter()
+        .flat_map(|claim| get_positions(&claim))
+        .group_count()
 }
 
-fn get_positions(claim: &Claim) -> impl Iterator<Item=(usize, usize)> {
+fn get_positions(claim: &Claim) -> impl Iterator<Item = (usize, usize)> {
     let xrange = claim.xoffset..(claim.xoffset + claim.width);
     let yrange = claim.yoffset..(claim.yoffset + claim.height);
     xrange.cartesian_product(yrange)
@@ -62,9 +70,27 @@ fn get_positions(claim: &Claim) -> impl Iterator<Item=(usize, usize)> {
 fn test_parse_input() {
     let input = "#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2";
     let result = vec![
-        Claim { id: 1, xoffset: 1, yoffset: 3, width: 4, height: 4 },
-        Claim { id: 2, xoffset: 3, yoffset: 1, width: 4, height: 4 },
-        Claim { id: 3, xoffset: 5, yoffset: 5, width: 2, height: 2 },
+        Claim {
+            id: 1,
+            xoffset: 1,
+            yoffset: 3,
+            width: 4,
+            height: 4,
+        },
+        Claim {
+            id: 2,
+            xoffset: 3,
+            yoffset: 1,
+            width: 4,
+            height: 4,
+        },
+        Claim {
+            id: 3,
+            xoffset: 5,
+            yoffset: 5,
+            width: 2,
+            height: 2,
+        },
     ];
     assert_eq!(parse_input(input), result);
 }
@@ -72,9 +98,27 @@ fn test_parse_input() {
 #[test]
 fn test_part1() {
     let input = vec![
-        Claim { id: 1, xoffset: 1, yoffset: 3, width: 4, height: 4 },
-        Claim { id: 2, xoffset: 3, yoffset: 1, width: 4, height: 4 },
-        Claim { id: 3, xoffset: 5, yoffset: 5, width: 2, height: 2 },
+        Claim {
+            id: 1,
+            xoffset: 1,
+            yoffset: 3,
+            width: 4,
+            height: 4,
+        },
+        Claim {
+            id: 2,
+            xoffset: 3,
+            yoffset: 1,
+            width: 4,
+            height: 4,
+        },
+        Claim {
+            id: 3,
+            xoffset: 5,
+            yoffset: 5,
+            width: 2,
+            height: 2,
+        },
     ];
     assert_eq!(part1(&input), 4);
 }
@@ -82,9 +126,27 @@ fn test_part1() {
 #[test]
 fn test_part2() {
     let input = vec![
-        Claim { id: 1, xoffset: 1, yoffset: 3, width: 4, height: 4 },
-        Claim { id: 2, xoffset: 3, yoffset: 1, width: 4, height: 4 },
-        Claim { id: 3, xoffset: 5, yoffset: 5, width: 2, height: 2 },
+        Claim {
+            id: 1,
+            xoffset: 1,
+            yoffset: 3,
+            width: 4,
+            height: 4,
+        },
+        Claim {
+            id: 2,
+            xoffset: 3,
+            yoffset: 1,
+            width: 4,
+            height: 4,
+        },
+        Claim {
+            id: 3,
+            xoffset: 5,
+            yoffset: 5,
+            width: 2,
+            height: 2,
+        },
     ];
     assert_eq!(part2(&input), 3);
 }

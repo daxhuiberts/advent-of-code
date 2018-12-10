@@ -6,23 +6,30 @@ pub fn part1(input: &str) -> usize {
 #[aoc(day5, part2)]
 pub fn part2(input: &str) -> usize {
     let input = input.trim();
-    (b'a'..b'z').map(|exclude|
-        react(input.chars().filter(|char|
-            !char.eq_ignore_ascii_case(&(exclude as char))
-        ))
-    ).min().unwrap()
+    (b'a'..b'z')
+        .map(|exclude| {
+            react(
+                input
+                    .chars()
+                    .filter(|char| !char.eq_ignore_ascii_case(&(exclude as char))),
+            )
+        })
+        .min()
+        .unwrap()
 }
 
-fn react(input: impl Iterator<Item=char>) -> usize {
-    input.fold(vec![], |mut list, right_char| {
-        if is_reactive(list.last(), Some(&right_char)) {
-            list.pop();
-        } else {
-            list.push(right_char);
-        }
+fn react(input: impl Iterator<Item = char>) -> usize {
+    input
+        .fold(vec![], |mut list, right_char| {
+            if is_reactive(list.last(), Some(&right_char)) {
+                list.pop();
+            } else {
+                list.push(right_char);
+            }
 
-        list
-    }).len()
+            list
+        })
+        .len()
 }
 
 fn is_reactive(left: Option<&char>, right: Option<&char>) -> bool {

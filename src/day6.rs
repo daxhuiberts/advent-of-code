@@ -1,13 +1,19 @@
-use itertools::Itertools;
 use aoctools::IterExt;
+use itertools::Itertools;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 
 #[aoc_generator(day6)]
 pub fn parse_input(input: &str) -> Vec<(usize, usize)> {
-    input.lines().map(|line|
-        line.split(", ").map(|coordinate| coordinate.parse().unwrap()).collect_tuple().unwrap()
-    ).collect()
+    input
+        .lines()
+        .map(|line| {
+            line.split(", ")
+                .map(|coordinate| coordinate.parse().unwrap())
+                .collect_tuple()
+                .unwrap()
+        })
+        .collect()
 }
 
 #[aoc(day6, part1)]
@@ -17,19 +23,25 @@ pub fn part1(input: &[(usize, usize)]) -> usize {
 
     // println!("max: ({}, {})", max_x, max_y);
 
-    let data: Vec<(usize, Option<usize>)> = (0..=max_y).cartesian_product(0..=max_x).map(|(y, x)| {
-        get_settler((x, y), input)
-    }).collect_vec();
+    let data: Vec<(usize, Option<usize>)> = (0..=max_y)
+        .cartesian_product(0..=max_x)
+        .map(|(y, x)| get_settler((x, y), input))
+        .collect_vec();
 
-    let edge_positions: HashSet<usize> = (0..=max_y).cartesian_product(0..=max_x).positions(|(y, x)|
-        x == 0 || x == max_x || y == 0 || y == max_y
-    ).collect();
+    let edge_positions: HashSet<usize> = (0..=max_y)
+        .cartesian_product(0..=max_x)
+        .positions(|(y, x)| x == 0 || x == max_x || y == 0 || y == max_y)
+        .collect();
 
     // println!("edge positions: {:?}", edge_positions);
 
-    let exclude_indexes: HashSet<usize> = data.iter().enumerate().filter(|(position, _)|
-        edge_positions.contains(position)
-    ).filter_map(|(_, (_score, some_index))| *some_index).unique().collect();
+    let exclude_indexes: HashSet<usize> = data
+        .iter()
+        .enumerate()
+        .filter(|(position, _)| edge_positions.contains(position))
+        .filter_map(|(_, (_score, some_index))| *some_index)
+        .unique()
+        .collect();
 
     // println!("exclude indexes: {:?}", exclude_indexes);
 
@@ -44,9 +56,11 @@ pub fn part1(input: &[(usize, usize)]) -> usize {
     //     println!("");
     // }
 
-    let index_scores = data.iter().filter_map(|(_score, some_index)| *some_index).filter(|index|
-        !exclude_indexes.contains(index)
-    ).group_count();
+    let index_scores = data
+        .iter()
+        .filter_map(|(_score, some_index)| *some_index)
+        .filter(|index| !exclude_indexes.contains(index))
+        .group_count();
 
     // println!("{:?}", index_scores);
 
@@ -62,22 +76,30 @@ fn part2_inner(input: &[(usize, usize)], threshold: usize) -> usize {
     let (x, y): (Vec<usize>, Vec<usize>) = input.iter().cloned().unzip();
     let (max_x, max_y) = (x.into_iter().max().unwrap(), y.into_iter().max().unwrap());
 
-    (0..=max_y).cartesian_product(0..=max_x).map(|(y, x)| {
-        input.iter().map(|(xx, yy)| {
-            manhattan_distance((x, y), (*xx, *yy))
-        }).sum::<usize>()
-    }).filter(|total_distance| *total_distance < threshold).count()
+    (0..=max_y)
+        .cartesian_product(0..=max_x)
+        .map(|(y, x)| {
+            input
+                .iter()
+                .map(|(xx, yy)| manhattan_distance((x, y), (*xx, *yy)))
+                .sum::<usize>()
+        })
+        .filter(|total_distance| *total_distance < threshold)
+        .count()
 }
 
 fn get_settler(coordinate: (usize, usize), input: &[(usize, usize)]) -> (usize, Option<usize>) {
-    input.iter().enumerate().fold((999, None), |(score, position), (index, (xx, yy))| {
-        let new_score = manhattan_distance(coordinate, (*xx, *yy));
-        match score.cmp(&new_score) {
-            Ordering::Less => (score, position),
-            Ordering::Equal => (score, None),
-            Ordering::Greater => (new_score, Some(index)),
-        }
-    })
+    input
+        .iter()
+        .enumerate()
+        .fold((999, None), |(score, position), (index, (xx, yy))| {
+            let new_score = manhattan_distance(coordinate, (*xx, *yy));
+            match score.cmp(&new_score) {
+                Ordering::Less => (score, position),
+                Ordering::Equal => (score, None),
+                Ordering::Greater => (new_score, Some(index)),
+            }
+        })
 }
 
 fn manhattan_distance(a: (usize, usize), b: (usize, usize)) -> usize {

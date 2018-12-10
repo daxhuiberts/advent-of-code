@@ -1,7 +1,7 @@
-extern crate itertools;
 extern crate aoctools;
-extern crate regex;
 extern crate chrono;
+extern crate itertools;
+extern crate regex;
 
 extern crate aoc_runner;
 #[macro_use]
@@ -21,4 +21,4 @@ pub mod day5;
 pub mod day6;
 pub mod day7;
 
-aoc_lib!{ year = 2018 }
+aoc_lib! { year = 2018 }
