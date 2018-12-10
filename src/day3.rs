@@ -48,7 +48,7 @@ pub fn part2(input: &[Claim]) -> usize {
     let map = input_to_map(input);
     input
         .iter()
-        .find(|claim| get_positions(claim).all(|(x, y)| *map.get(&(x, y)).unwrap() == 1))
+        .find(|claim| get_positions(claim).all(|(x, y)| map[&(x, y)] == 1))
         .unwrap()
         .id
 }

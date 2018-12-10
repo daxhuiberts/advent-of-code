@@ -149,8 +149,7 @@ pub fn part1(input: &[Shift]) -> usize {
         .unwrap()
         .0;
 
-    let sleepy_minutes = data.get(sleepiest_guard).unwrap();
-    let sleepiest_minute = sleepy_minutes
+    let sleepiest_minute = data[sleepiest_guard]
         .iter()
         .max_by_key(|(_minute, sleep_count)| *sleep_count)
         .unwrap()

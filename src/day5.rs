@@ -39,7 +39,7 @@ fn is_reactive(left: Option<&char>, right: Option<&char>) -> bool {
         }
     }
 
-    return false;
+    false
 }
 
 #[test]

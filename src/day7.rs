@@ -31,6 +31,7 @@ pub fn parse_input_step2(input: &[(char, char)]) -> HashMap<char, Vec<char>> {
 }
 
 #[aoc(day7, part1)]
+#[allow(clippy::implicit_hasher)]
 pub fn part1(prerequisites: &HashMap<char, Vec<char>>) -> String {
     let mut result = String::new();
 
@@ -42,6 +43,7 @@ pub fn part1(prerequisites: &HashMap<char, Vec<char>>) -> String {
 }
 
 #[aoc(day7, part2)]
+#[allow(clippy::implicit_hasher)]
 pub fn part2(prerequisites: &HashMap<char, Vec<char>>) -> String {
     part2_inner(prerequisites, 5, 60)
 }
