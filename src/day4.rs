@@ -181,6 +181,7 @@ pub fn part2(input: &[Shift]) -> usize {
 mod test {
     use super::*;
     use indoc::indoc;
+    use lazy_static::lazy_static;
 
     // Use the test data from the description, but mess up chronological ordering.
     const TEST_INPUT_DATA: &'static str = indoc!(

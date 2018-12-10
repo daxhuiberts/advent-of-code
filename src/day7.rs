@@ -123,6 +123,7 @@ fn get_next(prerequisites: &HashMap<char, Vec<char>>, done: &str, exclude: &str)
 mod test {
     use super::*;
     use indoc::indoc;
+    use lazy_static::lazy_static;
 
     const TEST_INPUT: &'static str = indoc!(
         "
