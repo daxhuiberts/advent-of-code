@@ -10,6 +10,13 @@ pub fn part1(input: &[usize]) -> usize {
     entry.sum_meta()
 }
 
+#[aoc(day8, part2)]
+pub fn part2(input: &[usize]) -> usize {
+    let mut iter = input.iter().cloned();
+    let entry = parse_entry(&mut iter);
+    entry.node_value()
+}
+
 struct Entry {
     children: Vec<Entry>,
     meta: Vec<usize>,
@@ -21,6 +28,18 @@ impl Entry {
         let meta_sum = self.meta.iter().sum::<usize>();
 
         children_sum + meta_sum
+    }
+
+    fn node_value(&self) -> usize {
+        if self.children.is_empty() {
+            self.meta.iter().sum()
+        } else {
+            self.meta.iter().filter_map(|index| {
+                self.children.get(index - 1)
+            }).map(|child| {
+                child.node_value()
+            }).sum()
+        }
     }
 }
 
@@ -53,5 +72,10 @@ mod test {
     #[test]
     fn test_part1() {
         assert_eq!(part1(&*TEST_INPUT_RESULT), 138);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(&*TEST_INPUT_RESULT), 66);
     }
 }
