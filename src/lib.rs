@@ -1,3 +1,5 @@
+#![allow(clippy::implicit_hasher)]
+
 #[macro_use]
 extern crate aoc_runner_derive;
 

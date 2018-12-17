@@ -50,7 +50,7 @@ fn parse_entry(input: &mut Iterator<Item = usize>) -> Entry {
     let children = (0..children_count).map(|_| parse_entry(input)).collect();
     let meta = input.take(meta_count).collect();
 
-    Entry { children: children, meta: meta }
+    Entry { children, meta }
 }
 
 #[cfg(test)]
