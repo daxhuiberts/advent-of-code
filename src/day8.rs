@@ -1,6 +1,9 @@
 #[aoc_generator(day8)]
 pub fn parse_input(input: &str) -> Vec<usize> {
-    input.split_whitespace().map(|item| item.parse().unwrap()).collect()
+    input
+        .split_whitespace()
+        .map(|item| item.parse().unwrap())
+        .collect()
 }
 
 #[aoc(day8, part1)]
@@ -24,7 +27,11 @@ struct Entry {
 
 impl Entry {
     fn sum_meta(&self) -> usize {
-        let children_sum = self.children.iter().map(|child| child.sum_meta()).sum::<usize>();
+        let children_sum = self
+            .children
+            .iter()
+            .map(|child| child.sum_meta())
+            .sum::<usize>();
         let meta_sum = self.meta.iter().sum::<usize>();
 
         children_sum + meta_sum
@@ -34,11 +41,11 @@ impl Entry {
         if self.children.is_empty() {
             self.meta.iter().sum()
         } else {
-            self.meta.iter().filter_map(|index| {
-                self.children.get(index - 1)
-            }).map(|child| {
-                child.node_value()
-            }).sum()
+            self.meta
+                .iter()
+                .filter_map(|index| self.children.get(index - 1))
+                .map(|child| child.node_value())
+                .sum()
         }
     }
 }
@@ -61,7 +68,8 @@ mod test {
     const TEST_INPUT: &'static str = "2 3 0 3 10 11 12 1 1 0 1 99 2 1 1 2";
 
     lazy_static! {
-        static ref TEST_INPUT_RESULT: Vec<usize> = vec![2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2];
+        static ref TEST_INPUT_RESULT: Vec<usize> =
+            vec![2, 3, 0, 3, 10, 11, 12, 1, 1, 0, 1, 99, 2, 1, 1, 2];
     }
 
     #[test]
