@@ -36,7 +36,10 @@ mod test {
 
     #[test]
     fn test_parse_input() {
-        assert_eq!(parse_input("10 players; last marble is worth 1618 points"), Box::new((10, 1618)));
+        assert_eq!(
+            parse_input("10 players; last marble is worth 1618 points"),
+            Box::new((10, 1618))
+        );
     }
 
     #[test]
