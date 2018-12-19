@@ -39,14 +39,13 @@ impl<'a, T> RingCursor<'a, T> {
     }
 }
 
-#[aoc(day9, part1)]
-pub fn part1((players, last_marble): &(usize, usize)) -> usize {
-    let mut scores = vec![0; *players];
+fn game_results(players: usize, last_marble: usize) -> Vec<usize> {
+    let mut scores = vec![0; players];
     let mut circle = LinkedList::new();
     let mut cursor = RingCursor { cursor: circle.cursor() };
     cursor.insert(0);
 
-    for (marble, player) in (1..=*last_marble).zip((0..*players).cycle()) {
+    for (marble, player) in (1..=last_marble).zip((0..players).cycle()) {
         if marble % 23 == 0 {
             scores[player] += marble;
             cursor.seek_backward(7);
@@ -57,7 +56,17 @@ pub fn part1((players, last_marble): &(usize, usize)) -> usize {
         }
     }
 
-    scores.into_iter().max().unwrap()
+    scores
+}
+
+#[aoc(day9, part1)]
+pub fn part1((players, last_marble): &(usize, usize)) -> usize {
+    game_results(*players, *last_marble).into_iter().max().unwrap()
+}
+
+#[aoc(day9, part2)]
+pub fn part2((players, last_marble): &(usize, usize)) -> usize {
+    game_results(*players, *last_marble * 100).into_iter().max().unwrap()
 }
 
 #[cfg(test)]
