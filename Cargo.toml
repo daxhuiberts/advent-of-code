@@ -8,6 +8,7 @@ edition = "2018"
 itertools = "*"
 regex = "*"
 chrono = "*"
+linked_list = { version = "*", package = "linked-list" }
 aoc-runner = "*"
 aoc-runner-derive = "*"
 aoctools = { git = "https://github.com/daxhuiberts/aoctools" }

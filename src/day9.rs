@@ -1,3 +1,5 @@
+use linked_list::{LinkedList, Cursor};
+
 #[aoc_generator(day9)]
 pub fn parse_input(input: &str) -> Box<(usize, usize)> {
     let mut iter = input.split_whitespace();
@@ -7,23 +9,51 @@ pub fn parse_input(input: &str) -> Box<(usize, usize)> {
     Box::new((players, last_marble))
 }
 
+struct RingCursor<'a, T: 'a> {
+    cursor: Cursor<'a, T>,
+}
+
+impl<'a, T> RingCursor<'a, T> {
+    fn insert(&mut self, elem: T) {
+        self.cursor.insert(elem)
+    }
+    fn remove(&mut self) -> T {
+        match self.cursor.remove() {
+            Some(elem) => elem,
+            None => self.cursor.remove().unwrap(),
+        }
+    }
+    fn seek_forward(&mut self, n: usize) {
+        for _ in 0..n {
+            if self.cursor.next().is_none() {
+                self.cursor.next().unwrap();
+            }
+        }
+    }
+    fn seek_backward(&mut self, n: usize) {
+        for _ in 0..n {
+            if self.cursor.prev().is_none() {
+                self.cursor.prev().unwrap();
+            }
+        }
+    }
+}
+
 #[aoc(day9, part1)]
 pub fn part1((players, last_marble): &(usize, usize)) -> usize {
     let mut scores = vec![0; *players];
-
-    let mut current_marble_index = 0;
-    let mut circle = vec![0];
+    let mut circle = LinkedList::new();
+    let mut cursor = RingCursor { cursor: circle.cursor() };
+    cursor.insert(0);
 
     for (marble, player) in (1..=*last_marble).zip((0..*players).cycle()) {
-        let current_length = circle.len();
-
         if marble % 23 == 0 {
             scores[player] += marble;
-            current_marble_index = (current_marble_index + current_length - 7) % current_length;
-            scores[player] += circle.remove(current_marble_index);
+            cursor.seek_backward(7);
+            scores[player] += cursor.remove();
         } else {
-            current_marble_index = ((current_marble_index + 1) % current_length) + 1;
-            circle.insert(current_marble_index, marble);
+            cursor.seek_forward(2);
+            cursor.insert(marble);
         }
     }
 
