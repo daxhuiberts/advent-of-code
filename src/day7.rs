@@ -113,8 +113,7 @@ fn get_next(prerequisites: &HashMap<char, Vec<char>>, done: &str, exclude: &str)
         })
         .map(|x| *x.0)
         .sorted()
-        .first()
-        .cloned()
+        .next()
 }
 
 #[cfg(test)]

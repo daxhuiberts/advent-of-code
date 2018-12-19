@@ -29,7 +29,6 @@ fn parse_input_step1(input: &str) -> Vec<Record> {
     input
         .lines()
         .sorted()
-        .iter()
         .map(|line| {
             let captures = regex_line.captures(line).unwrap();
 

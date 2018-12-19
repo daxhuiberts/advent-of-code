@@ -9,8 +9,8 @@ itertools = "*"
 regex = "*"
 chrono = "*"
 linked_list = { version = "*", package = "linked-list" }
-aoc-runner = "*"
-aoc-runner-derive = "*"
+aoc_runner = { version = "*", package = "aoc-runner" }
+aoc_runner_derive = { version = "*", package = "aoc-runner-derive" }
 aoctools = { git = "https://github.com/daxhuiberts/aoctools" }
 
 [dev-dependencies]
