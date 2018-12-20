@@ -39,7 +39,7 @@ impl<'a, T> RingCursor<'a, T> {
     }
 }
 
-fn game_results(players: usize, last_marble: usize) -> Vec<usize> {
+fn game_results(players: usize, last_marble: usize) -> usize {
     let mut scores = vec![0; players];
     let mut circle = LinkedList::new();
     let mut cursor = RingCursor {
