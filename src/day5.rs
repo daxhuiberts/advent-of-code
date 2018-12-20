@@ -1,11 +1,10 @@
 #[aoc(day5, part1)]
 pub fn part1(input: &str) -> usize {
-    react(input.trim().chars())
+    react(input.chars())
 }
 
 #[aoc(day5, part2)]
 pub fn part2(input: &str) -> usize {
-    let input = input.trim();
     (b'a'..b'z')
         .map(|exclude| {
             react(
