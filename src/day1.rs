@@ -21,18 +21,23 @@ pub fn part2(input: &[i32]) -> i32 {
     duplicates.filter_map(|value| value).next().unwrap()
 }
 
-#[test]
-fn test_part1() {
-    assert_eq!(part1(&[1, -2, 3, 1]), 3);
-    assert_eq!(part1(&[1, 1, 1]), 3);
-    assert_eq!(part1(&[1, 1, -2]), 0);
-    assert_eq!(part1(&[-1, -2, -3]), -6);
-}
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test_part2() {
-    assert_eq!(part2(&[1, -1]), 0);
-    assert_eq!(part2(&[3, 3, 4, -2, -4]), 10);
-    assert_eq!(part2(&[-6, 3, 8, 5, -6]), 5);
-    assert_eq!(part2(&[7, 7, -2, -7, -4]), 14);
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1(&[1, -2, 3, 1]), 3);
+        assert_eq!(part1(&[1, 1, 1]), 3);
+        assert_eq!(part1(&[1, 1, -2]), 0);
+        assert_eq!(part1(&[-1, -2, -3]), -6);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(&[1, -1]), 0);
+        assert_eq!(part2(&[3, 3, 4, -2, -4]), 10);
+        assert_eq!(part2(&[-6, 3, 8, 5, -6]), 5);
+        assert_eq!(part2(&[7, 7, -2, -7, -4]), 14);
+    }
 }

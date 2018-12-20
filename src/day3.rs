@@ -65,88 +65,92 @@ fn get_positions(claim: &Claim) -> impl Iterator<Item = (usize, usize)> {
     let yrange = claim.yoffset..(claim.yoffset + claim.height);
     xrange.cartesian_product(yrange)
 }
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test_parse_input() {
-    let input = "#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2";
-    let result = vec![
-        Claim {
-            id: 1,
-            xoffset: 1,
-            yoffset: 3,
-            width: 4,
-            height: 4,
-        },
-        Claim {
-            id: 2,
-            xoffset: 3,
-            yoffset: 1,
-            width: 4,
-            height: 4,
-        },
-        Claim {
-            id: 3,
-            xoffset: 5,
-            yoffset: 5,
-            width: 2,
-            height: 2,
-        },
-    ];
-    assert_eq!(parse_input(input), result);
-}
+    #[test]
+    fn test_parse_input() {
+        let input = "#1 @ 1,3: 4x4\n#2 @ 3,1: 4x4\n#3 @ 5,5: 2x2";
+        let result = vec![
+            Claim {
+                id: 1,
+                xoffset: 1,
+                yoffset: 3,
+                width: 4,
+                height: 4,
+            },
+            Claim {
+                id: 2,
+                xoffset: 3,
+                yoffset: 1,
+                width: 4,
+                height: 4,
+            },
+            Claim {
+                id: 3,
+                xoffset: 5,
+                yoffset: 5,
+                width: 2,
+                height: 2,
+            },
+        ];
+        assert_eq!(parse_input(input), result);
+    }
 
-#[test]
-fn test_part1() {
-    let input = vec![
-        Claim {
-            id: 1,
-            xoffset: 1,
-            yoffset: 3,
-            width: 4,
-            height: 4,
-        },
-        Claim {
-            id: 2,
-            xoffset: 3,
-            yoffset: 1,
-            width: 4,
-            height: 4,
-        },
-        Claim {
-            id: 3,
-            xoffset: 5,
-            yoffset: 5,
-            width: 2,
-            height: 2,
-        },
-    ];
-    assert_eq!(part1(&input), 4);
-}
+    #[test]
+    fn test_part1() {
+        let input = vec![
+            Claim {
+                id: 1,
+                xoffset: 1,
+                yoffset: 3,
+                width: 4,
+                height: 4,
+            },
+            Claim {
+                id: 2,
+                xoffset: 3,
+                yoffset: 1,
+                width: 4,
+                height: 4,
+            },
+            Claim {
+                id: 3,
+                xoffset: 5,
+                yoffset: 5,
+                width: 2,
+                height: 2,
+            },
+        ];
+        assert_eq!(part1(&input), 4);
+    }
 
-#[test]
-fn test_part2() {
-    let input = vec![
-        Claim {
-            id: 1,
-            xoffset: 1,
-            yoffset: 3,
-            width: 4,
-            height: 4,
-        },
-        Claim {
-            id: 2,
-            xoffset: 3,
-            yoffset: 1,
-            width: 4,
-            height: 4,
-        },
-        Claim {
-            id: 3,
-            xoffset: 5,
-            yoffset: 5,
-            width: 2,
-            height: 2,
-        },
-    ];
-    assert_eq!(part2(&input), 3);
+    #[test]
+    fn test_part2() {
+        let input = vec![
+            Claim {
+                id: 1,
+                xoffset: 1,
+                yoffset: 3,
+                width: 4,
+                height: 4,
+            },
+            Claim {
+                id: 2,
+                xoffset: 3,
+                yoffset: 1,
+                width: 4,
+                height: 4,
+            },
+            Claim {
+                id: 3,
+                xoffset: 5,
+                yoffset: 5,
+                width: 2,
+                height: 2,
+            },
+        ];
+        assert_eq!(part2(&input), 3);
+    }
 }

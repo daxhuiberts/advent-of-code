@@ -39,21 +39,25 @@ pub fn part2(input: &str) -> String {
         .next()
         .unwrap()
 }
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test_part1() {
-    let input = [
-        "abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab",
-    ]
-    .join("\n");
-    assert_eq!(part1(&input), 12);
-}
+    #[test]
+    fn test_part1() {
+        let input = [
+            "abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab",
+        ]
+        .join("\n");
+        assert_eq!(part1(&input), 12);
+    }
 
-#[test]
-fn test_part2() {
-    let input = [
-        "abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz",
-    ]
-    .join("\n");
-    assert_eq!(part2(&input), "fgij");
+    #[test]
+    fn test_part2() {
+        let input = [
+            "abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz",
+        ]
+        .join("\n");
+        assert_eq!(part2(&input), "fgij");
+    }
 }

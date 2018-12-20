@@ -41,12 +41,17 @@ fn is_reactive(left: Option<&char>, right: Option<&char>) -> bool {
     false
 }
 
-#[test]
-fn test_part1() {
-    assert_eq!(part1("dabAcCaCBAcCcaDA\n"), 10);
-}
+#[cfg(test)]
+mod test {
+    use super::*;
 
-#[test]
-fn test_part2() {
-    assert_eq!(part2("dabAcCaCBAcCcaDA\n"), 4);
+    #[test]
+    fn test_part1() {
+        assert_eq!(part1("dabAcCaCBAcCcaDA"), 10);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2("dabAcCaCBAcCcaDA"), 4);
+    }
 }
