@@ -22,11 +22,21 @@ pub fn parse_input(input: &str) -> Vec<((i32, i32), (i32, i32))> {
 
 #[aoc(day10, part1)]
 pub fn part1(input: &[((i32, i32), (i32, i32))]) -> String {
+    calculate_message(input).0
+}
+
+#[aoc(day10, part2)]
+pub fn part2(input: &[((i32, i32), (i32, i32))]) -> usize {
+    calculate_message(input).1
+}
+
+pub fn calculate_message(input: &[((i32, i32), (i32, i32))]) -> (String, usize) {
     let (mut positions, velocities): (Vec<(i32, i32)>, Vec<(i32, i32)>) =
         input.iter().cloned().unzip();
 
     let dimensions = get_dimensions(&positions);
     let mut size = get_size(dimensions);
+    let mut seconds = 0;
 
     loop {
         let new_positions = positions
@@ -43,11 +53,14 @@ pub fn part1(input: &[((i32, i32), (i32, i32))]) -> String {
         } else {
             positions = new_positions;
             size = new_size;
+            seconds += 1;
         }
     }
 
     let print_dimensions = get_dimensions(&positions);
-    generate_grid(&positions, print_dimensions)
+    let output = generate_grid(&positions, print_dimensions);
+
+    (output, seconds)
 }
 
 fn get_dimensions(positions: &[(i32, i32)]) -> ((i32, i32), (i32, i32)) {
@@ -186,5 +199,10 @@ mod test {
     #[test]
     fn test_part1() {
         assert_eq!(part1(&*TEST_INPUT_RESULT), OUTPUT);
+    }
+
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(&*TEST_INPUT_RESULT), 3);
     }
 }
