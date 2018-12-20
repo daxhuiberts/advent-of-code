@@ -46,7 +46,11 @@ pub fn part2(prerequisites: &HashMap<char, Vec<char>>) -> usize {
     part2_inner(prerequisites, 5, 60)
 }
 
-fn part2_inner(prerequisites: &HashMap<char, Vec<char>>, worker_count: usize, delay: usize) -> usize {
+fn part2_inner(
+    prerequisites: &HashMap<char, Vec<char>>,
+    worker_count: usize,
+    delay: usize,
+) -> usize {
     let mut workers = vec![None; worker_count];
     let mut exclude = String::new();
     let mut result = String::new();
