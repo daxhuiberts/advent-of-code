@@ -42,66 +42,46 @@ pub fn part1(prerequisites: &HashMap<char, Vec<char>>) -> String {
 }
 
 #[aoc(day7, part2)]
-pub fn part2(prerequisites: &HashMap<char, Vec<char>>) -> String {
+pub fn part2(prerequisites: &HashMap<char, Vec<char>>) -> usize {
     part2_inner(prerequisites, 5, 60)
 }
 
-type Workers = Vec<Option<(char, usize)>>;
+fn part2_inner(prerequisites: &HashMap<char, Vec<char>>, worker_count: usize, delay: usize) -> usize {
+    let mut workers = vec![None; worker_count];
+    let mut exclude = String::new();
+    let mut result = String::new();
+    let mut seconds = 0;
 
-fn part2_inner(prerequisites: &HashMap<char, Vec<char>>, workers: usize, delay: usize) -> String {
-    (0..)
-        .take(1200)
-        .fold(
-            (vec![None; workers], String::new()),
-            |(workers, mut result): (Workers, String), _second| {
-                // println!("{}: {:?} -- {}", second, workers, result);
+    loop {
+        for worker in &mut workers {
+            if let None = *worker {
+                *worker = get_next(prerequisites, &result, &exclude).map(|char| {
+                    exclude.push(char);
+                    (char, char as usize - 64 + delay)
+                })
+            }
+        }
 
-                let workers2: Workers = workers
-                    .iter()
-                    .map(|x| {
-                        x.and_then(|(char, sec)| {
-                            if sec == 1 {
-                                result.push(char);
-                                None
-                            } else {
-                                Some((char, sec - 1))
-                            }
-                        })
-                    })
-                    .collect_vec();
+        if workers.iter().all(|worker| worker.is_none()) {
+            return seconds;
+        }
 
-                let exclude: String = workers2
-                    .iter()
-                    .filter_map(|x| *x)
-                    .map(|(char, _sec)| char)
-                    .collect();
-                let new_workers = workers2
-                    .iter()
-                    .scan(exclude, |exclude, worker| {
-                        let res: Option<(char, usize)> = worker.or_else(|| {
-                            get_next(prerequisites, &result, &exclude).map(|new_char| {
-                                exclude.push(new_char);
-                                (new_char, get_seconds(new_char) + delay)
-                            })
-                        });
-                        Some(res)
-                    })
-                    .collect_vec();
+        for worker in &mut workers {
+            if let Some((char, sec)) = *worker {
+                if sec == 1 {
+                    result.push(char);
+                    *worker = None;
+                } else {
+                    *worker = Some((char, sec - 1));
+                }
+            }
+        }
 
-                // println!("{}: {:?} -- {}", second, new_workers, result);
-
-                (new_workers, result)
-            },
-        )
-        .1
-}
-
-fn get_seconds(char: char) -> usize {
-    char as usize - 64
+        seconds += 1;
+    }
 }
 
 fn get_next(prerequisites: &HashMap<char, Vec<char>>, done: &str, exclude: &str) -> Option<char> {
-    // println!("done: {}; exclude: {}", done, exclude);
     prerequisites
         .iter()
         .filter(|(char, char_prerequisites)| {
@@ -186,12 +166,6 @@ mod test {
 
     #[test]
     fn test_part2_inner() {
-        assert_eq!(part2_inner(&*TEST_INPUT_RESULT, 2, 0), "CABFDE");
-    }
-
-    #[test]
-    fn test_get_seconds() {
-        assert_eq!(get_seconds('A'), 1);
-        assert_eq!(get_seconds('Z'), 26);
+        assert_eq!(part2_inner(&*TEST_INPUT_RESULT, 2, 0), 15);
     }
 }
