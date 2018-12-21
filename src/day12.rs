@@ -1,7 +1,5 @@
 type Input = (Vec<bool>, Vec<(Vec<bool>, bool)>);
 
-const GENERATIONS: usize = 20;
-
 #[aoc_generator(day12)]
 pub fn parse_input(input: &str) -> Input {
     fn state(char: &u8) -> bool {
@@ -26,49 +24,46 @@ pub fn parse_input(input: &str) -> Input {
 }
 
 #[aoc(day12, part1)]
-pub fn part1((initial_state, rules): &Input) -> i32 {
-    let mut state: Vec<bool> = std::iter::repeat(false)
-        .take(4 * GENERATIONS)
-        .chain(initial_state.iter().cloned())
-        .chain(std::iter::repeat(false).take(4 * GENERATIONS))
-        .collect();
+pub fn part1(input: &Input) -> i64 {
+    run(input, 20)
+}
 
-    print_state(&state, 0);
+#[aoc(day12, part2)]
+pub fn part2(input: &Input) -> i64 {
+    run(input, 50_000_000_000)
+}
 
-    for generation in 1..=GENERATIONS {
-        state = state.windows(5).map(|window|
+fn run((initial_state, rules): &Input, generations: i64) -> i64 {
+    let mut state: Vec<bool> = initial_state.clone();
+    let mut offset: i64 = 0;
+
+    for generation in 1..=generations {
+        for _ in 0..3 {
+            if state[0..3] != [false, false, false] {
+                state.insert(0, false);
+                offset -= 1;
+            }
+            let end = state.len();
+            if state[(end - 3)..end] != [false, false, false] {
+                state.push(false);
+            }
+        }
+
+        let new_state = state.windows(5).map(|window|
             rules.iter().find(|(check, _)| check[..] == *window).map(|(_, result)| *result).unwrap_or(false)
-        ).collect();
+        ).collect::<Vec<bool>>();
 
-        state.insert(0, false);
-        state.insert(0, false);
-        state.push(false);
-        state.push(false);
+        if let Some(index) = (0..=2).find(|index| state[*index..].starts_with(&new_state)) {
+            offset += (generations - generation + 1) * (index as i64);
+            break;
+        }
 
-        print_state(&state, generation);
+        state = new_state;
+        offset += 2;
     }
 
-    state.into_iter().zip((-4 * GENERATIONS as i32)..).filter_map(|(plant, score)| if plant { Some(score) } else { None }).sum()
+    state.into_iter().zip(offset..).filter_map(|(plant, score)| if plant { Some(score) } else { None }).sum()
 }
-
-fn print_state(state: &[bool], generation: usize) {
-    print!("{:2}: ", generation);
-    for item in state {
-        print!("{}", if *item { "#" } else { "." });
-    }
-    println!();
-}
-
-// #[aoc(day12, part2)]
-// pub fn part2(input: &[i32]) -> i32 {
-//     let iterator = std::iter::once(&0).chain(input.iter().cycle());
-//     let cumulated = iterator.scan(0, |state, value| {
-//         *state += value;
-//         Some(*state)
-//     });
-//     let duplicates = cumulated.scan(HashSet::new(), |set, value| Some(set.replace(value)));
-//     duplicates.filter_map(|value| value).next().unwrap()
-// }
 
 #[cfg(test)]
 mod test {
@@ -137,11 +132,8 @@ mod test {
         assert_eq!(part1(&*TEST_INPUT_RESULT), 325);
     }
 
-    // #[test]
-    // fn test_part2() {
-    //     assert_eq!(part2(&[1, -1]), 0);
-    //     assert_eq!(part2(&[3, 3, 4, -2, -4]), 10);
-    //     assert_eq!(part2(&[-6, 3, 8, 5, -6]), 5);
-    //     assert_eq!(part2(&[7, 7, -2, -7, -4]), 14);
-    // }
+    #[test]
+    fn test_part2() {
+        assert_eq!(part2(&*TEST_INPUT_RESULT), 999999999374);
+    }
 }
