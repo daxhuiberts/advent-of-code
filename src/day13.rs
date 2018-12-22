@@ -51,51 +51,29 @@ pub fn part1(input: &(Track, Vec<Cart>)) -> String {
                 _ => panic!("invalid direction"),
             }
 
-            match (track[*y][*x], *direction, *step) {
-                ('/', '^', _) => *direction = '>',
-                ('/', 'v', _) => *direction = '<',
-                ('/', '<', _) => *direction = 'v',
-                ('/', '>', _) => *direction = '^',
-                ('\\', '^', _) => *direction = '<',
-                ('\\', 'v', _) => *direction = '>',
-                ('\\', '<', _) => *direction = '^',
-                ('\\', '>', _) => *direction = 'v',
-                ('+', '^', 0) => {
-                    *direction = '<';
-                    *step = 1;
-                },
-                ('+', '^', 1) => *step = 2,
-                ('+', '^', 2) => {
-                    *direction = '>';
-                    *step = 0;
-                },
-                ('+', 'v', 0) => {
-                    *direction = '>';
-                    *step = 1;
-                },
-                ('+', 'v', 1) => *step = 2,
-                ('+', 'v', 2) => {
-                    *direction = '<';
-                    *step = 0;
-                },
-                ('+', '<', 0) => {
-                    *direction = 'v';
-                    *step = 1;
-                },
-                ('+', '<', 1) => *step = 2,
-                ('+', '<', 2) => {
-                    *direction = '^';
-                    *step = 0;
-                },
-                ('+', '>', 0) => {
-                    *direction = '^';
-                    *step = 1;
-                },
-                ('+', '>', 1) => *step = 2,
-                ('+', '>', 2) => {
-                    *direction = 'v';
-                    *step = 0;
-                },
+            match (track[*y][*x], *direction) {
+                ('/', '^') => *direction = '>',
+                ('/', 'v') => *direction = '<',
+                ('/', '<') => *direction = 'v',
+                ('/', '>') => *direction = '^',
+                ('\\', '^') => *direction = '<',
+                ('\\', 'v') => *direction = '>',
+                ('\\', '<') => *direction = '^',
+                ('\\', '>') => *direction = 'v',
+                ('+', _) => {
+                    match (*direction, *step) {
+                        ('^', 0) => *direction = '<',
+                        ('^', 2) => *direction = '>',
+                        ('v', 0) => *direction = '>',
+                        ('v', 2) => *direction = '<',
+                        ('<', 0) => *direction = 'v',
+                        ('<', 2) => *direction = '^',
+                        ('>', 0) => *direction = '^',
+                        ('>', 2) => *direction = 'v',
+                        _ => (),
+                    };
+                    *step = (*step + 1) % 3;
+                }
                 _ => (),
             }
 
