@@ -8,24 +8,15 @@ pub fn parse_input(input: &str) -> (Track, Vec<Cart>) {
 
     for (y, row) in track.iter_mut().enumerate() {
         for (x, cell) in row.iter_mut().enumerate() {
-            match *cell {
-                '^' => {
-                    carts.push((x, y, '^', 0));
-                    *cell = '|';
-                },
-                'v' => {
-                    carts.push((x, y, 'v', 0));
-                    *cell = '|';
-                },
-                '<' => {
-                    carts.push((x, y, '<', 0));
-                    *cell = '-';
-                },
-                '>' => {
-                    carts.push((x, y, '>', 0));
-                    *cell = '-';
-                },
-                _ => ()
+            if ['^', 'v', '<', '>'].contains(cell) {
+                carts.push((x, y, *cell, 0));
+            }
+            *cell = match *cell {
+                '^' => '|',
+                'v' => '|',
+                '<' => '-',
+                '>' => '-',
+                x => x,
             }
         }
     }
