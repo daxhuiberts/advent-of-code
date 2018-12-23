@@ -49,9 +49,16 @@ fn run((initial_state, rules): &Input, generations: i64) -> i64 {
             }
         }
 
-        let new_state = state.windows(5).map(|window|
-            rules.iter().find(|(check, _)| check[..] == *window).map(|(_, result)| *result).unwrap_or(false)
-        ).collect::<Vec<bool>>();
+        let new_state = state
+            .windows(5)
+            .map(|window| {
+                rules
+                    .iter()
+                    .find(|(check, _)| check[..] == *window)
+                    .map(|(_, result)| *result)
+                    .unwrap_or(false)
+            })
+            .collect::<Vec<bool>>();
 
         if let Some(index) = (0..=2).find(|index| state[*index..].starts_with(&new_state)) {
             offset += (generations - generation + 1) * (index as i64);
@@ -62,7 +69,11 @@ fn run((initial_state, rules): &Input, generations: i64) -> i64 {
         offset += 2;
     }
 
-    state.into_iter().zip(offset..).filter_map(|(plant, score)| if plant { Some(score) } else { None }).sum()
+    state
+        .into_iter()
+        .zip(offset..)
+        .filter_map(|(plant, score)| if plant { Some(score) } else { None })
+        .sum()
 }
 
 #[cfg(test)]
