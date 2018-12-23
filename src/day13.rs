@@ -178,7 +178,7 @@ mod test {
         static ref TEST_INPUT_RESULT: (Track, Vec<Cart>) = {
             (
                 TEST_INPUT_TRACK.clone(),
-                vec![(0, 2, 0, '>', 0), (1, 9, 3, 'v', 0)],
+                vec![(1, 2, 0, '>', 0), (2, 9, 3, 'v', 0)],
             )
         };
     }
@@ -190,6 +190,6 @@ mod test {
 
     #[test]
     fn test_part1() {
-        assert_eq!(part1(&*TEST_INPUT_RESULT), "7,3");
+        assert_eq!(part1(&*TEST_INPUT_RESULT), "7,3 (generation 14)");
     }
 }
