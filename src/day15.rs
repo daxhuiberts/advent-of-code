@@ -1,9 +1,25 @@
 #[aoc(day15, part1)]
 pub fn part1(input: &str) -> usize {
-    let grid = Grid::from_str(input);
+    let mut grid = Grid::from_str(input);
+    step(&mut grid);
     println!("{:?}", grid);
 
     grid.width * grid.height
+}
+
+fn step(grid: &mut Grid) {
+    for y in 0..grid.height {
+        for x in 0..grid.width {
+            let cell = grid.get(x, y);
+            match cell {
+                '#' => (), // wall
+                '.' => (), // floor
+                'G' => (), // gnome
+                'E' => (), // Self
+                _ => panic!("not allowed"),
+            }
+        }
+    }
 }
 
 struct Grid {
@@ -19,9 +35,7 @@ impl Grid {
 
         let data = str.lines().flat_map(|line| {
             let line = line.chars().collect::<Vec<char>>();
-            if line.len() != width {
-                panic!("line not same width as first line");
-            }
+            assert!(line.len() == width, "line not same width as first line");
             line
         }).collect();
 
@@ -29,11 +43,16 @@ impl Grid {
     }
 
     pub fn new(width: usize, height: usize, data: Vec<char>) -> Self {
-        if data.len() != width * height {
-            panic!("data len not correct");
-        }
+        assert!(data.len() == width * height, "data len not correct");
 
         Self { width, height, data }
+    }
+
+    pub fn get(&self, x: usize, y: usize) -> char {
+        assert!(x < self.width, "x outside width");
+        assert!(y < self.height, "y outside height");
+
+        self.data[x + y * self.width]
     }
 }
 
@@ -68,8 +87,58 @@ mod test {
     "
     );
 
+    const ROUND_1: &'static str = indoc!(
+        r"
+        #########
+        #.G...G.#
+        #...G...#
+        #...E..G#
+        #.G.....#
+        #.......#
+        #G..G..G#
+        #.......#
+        #########
+    "
+    );
+
+    const ROUND_2: &'static str = indoc!(
+        r"
+        #########
+        #..G.G..#
+        #...G...#
+        #.G.E.G.#
+        #.......#
+        #G..G..G#
+        #.......#
+        #.......#
+        #########
+    "
+    );
+
+    const ROUND_3: &'static str = indoc!(
+        r"
+        #########
+        #.......#
+        #..GGG..#
+        #..GEG..#
+        #G..G...#
+        #......G#
+        #.......#
+        #.......#
+        #########
+    "
+    );
+
     #[test]
-    fn test_grid_from_str() {
-        Grid::from_str(ROUND_0);
+    fn test_grid_step() {
+        let mut grid = Grid::from_str(ROUND_0);
+
+        assert_eq!(format!("{:?}", grid), ROUND_0);
+        step(&mut grid);
+        assert_eq!(format!("{:?}", grid), ROUND_1);
+        step(&mut grid);
+        assert_eq!(format!("{:?}", grid), ROUND_2);
+        step(&mut grid);
+        assert_eq!(format!("{:?}", grid), ROUND_3);
     }
 }
