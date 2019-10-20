@@ -50,7 +50,7 @@ impl Entry {
     }
 }
 
-fn parse_entry(input: &mut Iterator<Item = usize>) -> Entry {
+fn parse_entry(input: &mut impl Iterator<Item = usize>) -> Entry {
     let children_count = input.next().unwrap();
     let meta_count = input.next().unwrap();
 
