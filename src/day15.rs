@@ -22,20 +22,19 @@ fn step(grid: &mut Grid) {
             if !visited.contains(&(x, y)) {
                 let cell = grid.get(x, y);
                 match cell {
-                    '#' => (), // wall
-                    '.' => (), // floor
-                    'G' | 'E' => {
+                    Cell::Wall => (), // wall
+                    Cell::Floor => (), // floor
+                    Cell::Creature { .. } => {
                         if let Some((new_x, new_y)) = act(grid, x, y, cell) {
                             visited.insert((new_x, new_y));
                         }
                     }
-                    _ => panic!("not allowed"),
                 }
             }
         }
     }
 
-    fn act(grid: &mut Grid, x: usize, y: usize, me: char) -> Option<(usize, usize)> {
+    fn act(grid: &mut Grid, x: usize, y: usize, me: Cell) -> Option<(usize, usize)> {
         if grid.get(x - 1, y) == opposite(me) ||
             grid.get(x + 1, y) == opposite(me) ||
             grid.get(x, y - 1) == opposite(me) ||
@@ -49,12 +48,12 @@ fn step(grid: &mut Grid) {
     }
 
     #[allow(unused_variables)]
-    fn attack(grid: &mut Grid, x: usize, y: usize, me: char) {
+    fn attack(grid: &mut Grid, x: usize, y: usize, me: Cell) {
 
     }
 
     #[allow(unused_variables)]
-    fn walk(grid: &mut Grid, x: usize, y: usize, me: char) -> Option<(usize, usize)>{
+    fn walk(grid: &mut Grid, x: usize, y: usize, me: Cell) -> Option<(usize, usize)>{
         let opposite = opposite(me);
         let directions = [(0, usize::max_value()), (usize::max_value(), 0), (1, 0), (0, 1)];
         let mut frontier = VecDeque::new();
@@ -62,7 +61,7 @@ fn step(grid: &mut Grid) {
 
         for &(xoffset, yoffset) in &directions {
             let cell = grid.gett(apply(x, xoffset, y, yoffset));
-            if cell == '.' {
+            if cell == Cell::Floor {
                 frontier.push_back((apply(x, xoffset, y, yoffset), (xoffset, yoffset)));
                 visited.insert(apply(x, xoffset, y, yoffset));
             }
@@ -74,10 +73,10 @@ fn step(grid: &mut Grid) {
                     let cell = grid.gett(apply(xx, xoffset, yy, yoffset));
                     if cell == opposite {
                         let new_pos = apply(x, direction.0, y, direction.1);
-                        grid.set(x, y, '.');
+                        grid.set(x, y, Cell::Floor);
                         grid.sett(new_pos, me);
                         return Some(new_pos);
-                    } else if cell == '.' {
+                    } else if cell == Cell::Floor {
                         frontier.push_back((apply(xx, xoffset, yy, yoffset), direction));
                         visited.insert(apply(xx, xoffset, yy, yoffset));
                     }
@@ -92,10 +91,12 @@ fn step(grid: &mut Grid) {
         }
     }
 
-    fn opposite(me: char) -> char {
+    fn opposite(me: Cell) -> Cell {
         match me {
-            'G' => 'E',
-            'E' => 'G',
+            Cell::Creature { race } => match race {
+                CreatureRace::Elf => Cell::Creature { race: CreatureRace::Gnome },
+                CreatureRace::Gnome => Cell::Creature { race: CreatureRace::Elf },
+            },
             _ => panic!("not allowed")
         }
     }
@@ -104,7 +105,7 @@ fn step(grid: &mut Grid) {
 struct Grid {
     width: usize,
     height: usize,
-    data: Vec<char>,
+    data: Vec<Cell>,
 }
 
 impl Grid {
@@ -113,7 +114,7 @@ impl Grid {
         let height = str.lines().count();
 
         let data = str.lines().flat_map(|line| {
-            let line = line.chars().collect::<Vec<char>>();
+            let line = line.chars().map(Cell::from_char).collect::<Vec<Cell>>();
             assert!(line.len() == width, "line not same width as first line");
             line
         }).collect();
@@ -121,34 +122,34 @@ impl Grid {
         Self::new(width, height, data)
     }
 
-    pub fn new(width: usize, height: usize, data: Vec<char>) -> Self {
+    pub fn new(width: usize, height: usize, data: Vec<Cell>) -> Self {
         assert!(data.len() == width * height, "data len not correct");
 
         Self { width, height, data }
     }
 
-    pub fn get(&self, x: usize, y: usize) -> char {
+    pub fn get(&self, x: usize, y: usize) -> Cell {
         assert!(x < self.width, "x outside width");
         assert!(y < self.height, "y outside height");
 
         self.data[x + y * self.width]
     }
 
-    pub fn gett(&self, (x, y): (usize, usize)) -> char {
+    pub fn gett(&self, (x, y): (usize, usize)) -> Cell {
         assert!(x < self.width, "x outside width");
         assert!(y < self.height, "y outside height");
 
         self.data[x + y * self.width]
     }
 
-    pub fn set(&mut self, x: usize, y: usize, cell: char) {
+    pub fn set(&mut self, x: usize, y: usize, cell: Cell) {
         assert!(x < self.width, "x outside width");
         assert!(y < self.height, "y outside height");
 
         self.data[x + y * self.width] = cell;
     }
 
-    pub fn sett(&mut self, (x, y): (usize, usize), cell: char) {
+    pub fn sett(&mut self, (x, y): (usize, usize), cell: Cell) {
         assert!(x < self.width, "x outside width");
         assert!(y < self.height, "y outside height");
 
@@ -160,10 +161,51 @@ impl std::fmt::Debug for Grid {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         for line in self.data.chunks(self.width) {
             for cell in line.iter() {
-                write!(f, "{}", cell)?;
+                write!(f, "{:?}", cell)?;
             }
             writeln!(f)?;
         }
+        Ok(())
+    }
+}
+
+#[derive(Copy, Clone, Eq, PartialEq)]
+enum Cell {
+    Wall,
+    Floor,
+    Creature {
+        race: CreatureRace,
+    },
+}
+
+#[derive(Copy, Clone, Eq, PartialEq)]
+enum CreatureRace {
+    Elf,
+    Gnome,
+}
+
+impl Cell {
+    pub fn from_char(c: char) -> Self {
+        match c {
+            '#' => Cell::Wall,
+            '.' => Cell::Floor,
+            'E' => Cell::Creature { race: CreatureRace::Elf },
+            'G' => Cell::Creature { race: CreatureRace::Gnome },
+            _ => panic!("invalid character")
+        }
+    }
+}
+
+impl std::fmt::Debug for Cell {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            Cell::Wall => "#",
+            Cell::Floor => ".",
+            Cell::Creature { race } => match race {
+                CreatureRace::Elf => "E",
+                CreatureRace::Gnome => "G",
+            },
+        })?;
         Ok(())
     }
 }
@@ -241,6 +283,9 @@ mod test {
         step(&mut grid);
         println!("{:?}", grid);
         assert_eq!(format!("{:?}", grid), ROUND_2);
+        step(&mut grid);
+        println!("{:?}", grid);
+        assert_eq!(format!("{:?}", grid), ROUND_3);
         step(&mut grid);
         println!("{:?}", grid);
         assert_eq!(format!("{:?}", grid), ROUND_3);
