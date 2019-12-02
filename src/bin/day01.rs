@@ -1,4 +1,4 @@
-static INPUT: &str = include_str!("day01.txt");
+static INPUT: &str = include_str!("../../input/day01.txt");
 
 fn main() {
     let input: Vec<i32> = INPUT.lines().map(|line| line.parse().unwrap()).collect();
