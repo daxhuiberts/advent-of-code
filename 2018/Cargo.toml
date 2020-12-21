@@ -1,0 +1,18 @@
+[package]
+name = "aoc18"
+version = "0.1.0"
+authors = ["Dax Huiberts <daxhuiberts@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+itertools = "*"
+regex = "*"
+chrono = "*"
+linked_list = { version = "*", package = "linked-list" }
+aoc_runner = { version = "*", package = "aoc-runner" }
+aoc_runner_derive = { version = "*", package = "aoc-runner-derive" }
+aoctools = { path = "../aoctools" }
+
+[dev-dependencies]
+indoc = "*"
+lazy_static = "*"
