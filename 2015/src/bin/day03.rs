@@ -1,23 +1,36 @@
-use std::collections::HashSet;
-use itertools::Itertools;
 use aoctools::IterExt;
+use itertools::Itertools;
+use std::collections::HashSet;
 
-#[aoc(day3, part1)]
-pub fn part1(input: &str) -> usize {
-    input.trim().chars().scan_ref((0, 0), update_direction).fold_ref(set![(0, 0)], |set, position| {
-        set.insert(position);
-    }).len()
+static INPUT: &str = include_str!("../../input/day03.txt");
+
+fn main() {
+    println!("part 1: {}", part1(INPUT));
+    println!("part 2: {}", part2(INPUT));
 }
 
-#[aoc(day3, part2)]
-pub fn part2(input: &str) -> usize {
+fn part1(input: &str) -> usize {
+    input
+        .trim()
+        .chars()
+        .scan_ref((0, 0), update_direction)
+        .fold_ref(HashSet::from([(0, 0)]), |set, position| {
+            set.insert(position);
+        })
+        .len()
+}
+
+fn part2(input: &str) -> usize {
     let (santa, robot) = input.trim().chars().tee();
     let santa_iter = santa.step_by(2).scan_ref((0, 0), update_direction);
     let robot_iter = robot.skip(1).step_by(2).scan_ref((0, 0), update_direction);
 
-    santa_iter.chain(robot_iter).fold_ref(set![(0, 0)], |set, position| {
-        set.insert(position);
-    }).len()
+    santa_iter
+        .chain(robot_iter)
+        .fold_ref(HashSet::from([(0, 0)]), |set, position| {
+            set.insert(position);
+        })
+        .len()
 }
 
 fn update_direction(position: &mut (i32, i32), direction: char) {

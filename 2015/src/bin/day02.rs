@@ -1,19 +1,30 @@
 use itertools::Itertools;
 
-#[aoc_generator(day2)]
-pub fn parse_input(input: &str) -> Vec<(u32, u32, u32)> {
-    input.lines().map(|line|
-        line.split('x').map(|x| x.parse().unwrap()).collect_tuple().unwrap()
-    ).collect()
+static INPUT: &str = include_str!("../../input/day02.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
 }
 
-#[aoc(day2, part1)]
-pub fn part1(input: &[(u32, u32, u32)]) -> u32 {
+fn parse_input(input: &str) -> Vec<(u32, u32, u32)> {
+    input
+        .lines()
+        .map(|line| {
+            line.split('x')
+                .map(|x| x.parse().unwrap())
+                .collect_tuple()
+                .unwrap()
+        })
+        .collect()
+}
+
+fn part1(input: &[(u32, u32, u32)]) -> u32 {
     input.iter().map(|lwh| wrapping_paper(*lwh)).sum()
 }
 
-#[aoc(day2, part2)]
-pub fn part2(input: &[(u32, u32, u32)]) -> u32 {
+fn part2(input: &[(u32, u32, u32)]) -> u32 {
     input.iter().map(|lwh| ribbon(*lwh)).sum()
 }
 
@@ -23,8 +34,8 @@ fn wrapping_paper((length, width, height): (u32, u32, u32)) -> u32 {
 }
 
 fn ribbon((length, width, height): (u32, u32, u32)) -> u32 {
-    let smallest = min3(length + width, length + height, width + height);
-    smallest * 2 + length * width * height
+    let shortest_side = min3(length + width, length + height, width + height);
+    shortest_side * 2 + length * width * height
 }
 
 fn min3<T: Ord>(a: T, b: T, c: T) -> T {
