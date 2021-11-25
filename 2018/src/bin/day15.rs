@@ -1,8 +1,13 @@
 use std::collections::HashSet;
 use std::collections::VecDeque;
 
-#[aoc(day15, part1)]
-pub fn part1(input: &str) -> usize {
+static INPUT: &str = include_str!("../../input/day15.txt");
+
+fn main() {
+    println!("part 1: {}", part1(INPUT));
+}
+
+fn part1(input: &str) -> usize {
     let mut grid = Grid::from_str(input);
     let result = grid.process();
     println!("{:?}", grid);
@@ -20,11 +25,14 @@ impl Grid {
         let width = str.lines().next().unwrap().chars().count();
         let height = str.lines().count();
 
-        let data = str.lines().flat_map(|line| {
-            let line = line.chars().map(Cell::from_char).collect::<Vec<Cell>>();
-            assert!(line.len() == width, "line not same width as first line");
-            line
-        }).collect();
+        let data = str
+            .lines()
+            .flat_map(|line| {
+                let line = line.chars().map(Cell::from_char).collect::<Vec<Cell>>();
+                assert!(line.len() == width, "line not same width as first line");
+                line
+            })
+            .collect();
 
         Self::new(width, height, data)
     }
@@ -32,13 +40,17 @@ impl Grid {
     pub fn new(width: usize, height: usize, data: Vec<Cell>) -> Self {
         assert!(data.len() == width * height, "data len not correct");
 
-        Self { width, height, data }
+        Self {
+            width,
+            height,
+            data,
+        }
     }
 
     pub fn process(&mut self) -> usize {
         for i in 0..1000 {
             if !self.step() {
-                return i * self.count_health()
+                return i * self.count_health();
             }
         }
 
@@ -73,22 +85,23 @@ impl Grid {
 
     pub fn is_done(&self) -> bool {
         [CreatureRace::Elf, CreatureRace::Gnome].iter().any(|race| {
-            !self.data.iter().any(|cell| {
-                match cell {
-                    Cell::Creature { race: cell_race, .. } => race == cell_race,
-                    _ => false
-                }
+            !self.data.iter().any(|cell| match cell {
+                Cell::Creature {
+                    race: cell_race, ..
+                } => race == cell_race,
+                _ => false,
             })
         })
     }
 
     pub fn count_health(&self) -> usize {
-        self.data.iter().map(|cell| {
-            match cell {
+        self.data
+            .iter()
+            .map(|cell| match cell {
                 Cell::Creature { health, .. } => *health,
-                _ => 0
-            }
-        }).sum()
+                _ => 0,
+            })
+            .sum()
     }
 
     fn act(&mut self, x: usize, y: usize, me: Cell) -> (usize, usize) {
@@ -108,19 +121,22 @@ impl Grid {
     #[allow(unused_variables)]
     fn attack(&mut self, x: usize, y: usize, me: Cell) {
         let positions = vec![(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)];
-        let mut possible_enemies: Vec<(usize, usize, usize)> = positions.into_iter().filter_map(|(xx, yy)| {
-            let other = self.get(xx, yy);
-            if other.is_enemy_of(&me) {
-                if let Cell::Creature { health, .. } = other {
-                    Some((xx, yy, health))
+        let mut possible_enemies: Vec<(usize, usize, usize)> = positions
+            .into_iter()
+            .filter_map(|(xx, yy)| {
+                let other = self.get(xx, yy);
+                if other.is_enemy_of(&me) {
+                    if let Cell::Creature { health, .. } = other {
+                        Some((xx, yy, health))
+                    } else {
+                        None
+                    }
                 } else {
                     None
                 }
-            } else {
-                None
-            }
-        }).collect();
-        possible_enemies.sort_by_key(|a| a.2 );
+            })
+            .collect();
+        possible_enemies.sort_by_key(|a| a.2);
 
         if let Some((xx, yy, _)) = possible_enemies.first() {
             let enemy = self.get(*xx, *yy);
@@ -128,7 +144,14 @@ impl Grid {
                 if health < 3 {
                     self.set(*xx, *yy, Cell::Floor);
                 } else {
-                    self.set(*xx, *yy, Cell::Creature { race, health: health - 3 } );
+                    self.set(
+                        *xx,
+                        *yy,
+                        Cell::Creature {
+                            race,
+                            health: health - 3,
+                        },
+                    );
                 }
             } else {
                 panic!("NOT POSSIBLE!!")
@@ -138,13 +161,18 @@ impl Grid {
 
     fn enemy_near(&self, x: usize, y: usize, me: Cell) -> bool {
         let positions = vec![(x, y - 1), (x - 1, y), (x + 1, y), (x, y + 1)];
-        positions.into_iter().any(|(xx, yy)|
-            self.get(xx, yy).is_enemy_of(&me)
-        )
+        positions
+            .into_iter()
+            .any(|(xx, yy)| self.get(xx, yy).is_enemy_of(&me))
     }
 
     fn walk(&mut self, x: usize, y: usize, me: Cell) -> (usize, usize) {
-        let directions = [(0, usize::max_value()), (usize::max_value(), 0), (1, 0), (0, 1)];
+        let directions = [
+            (0, usize::max_value()),
+            (usize::max_value(), 0),
+            (1, 0),
+            (0, 1),
+        ];
         let mut frontier = VecDeque::new();
         let mut visited = HashSet::new();
 
@@ -222,16 +250,13 @@ impl std::fmt::Debug for Grid {
 enum Cell {
     Wall,
     Floor,
-    Creature {
-        race: CreatureRace,
-        health: usize
-    }
+    Creature { race: CreatureRace, health: usize },
 }
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 enum CreatureRace {
     Elf,
-    Gnome
+    Gnome,
 }
 
 impl Cell {
@@ -239,30 +264,45 @@ impl Cell {
         match c {
             '#' => Cell::Wall,
             '.' => Cell::Floor,
-            'E' => Cell::Creature { race: CreatureRace::Elf, health: 200 },
-            'G' => Cell::Creature { race: CreatureRace::Gnome, health: 200 },
-            _ => panic!("invalid character")
+            'E' => Cell::Creature {
+                race: CreatureRace::Elf,
+                health: 200,
+            },
+            'G' => Cell::Creature {
+                race: CreatureRace::Gnome,
+                health: 200,
+            },
+            _ => panic!("invalid character"),
         }
     }
 
     pub fn is_enemy_of(&self, other: &Cell) -> bool {
         match (self, other) {
-            (Cell::Creature { race, .. }, Cell::Creature { race: other_race, .. }) => race != other_race,
-            _ => false
+            (
+                Cell::Creature { race, .. },
+                Cell::Creature {
+                    race: other_race, ..
+                },
+            ) => race != other_race,
+            _ => false,
         }
     }
 }
 
 impl std::fmt::Debug for Cell {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{}", match self {
-            Cell::Wall => "#",
-            Cell::Floor => ".",
-            Cell::Creature { race, .. } => match race {
-                CreatureRace::Elf => "E",
-                CreatureRace::Gnome => "G",
-            },
-        })?;
+        write!(
+            f,
+            "{}",
+            match self {
+                Cell::Wall => "#",
+                Cell::Floor => ".",
+                Cell::Creature { race, .. } => match race {
+                    CreatureRace::Elf => "E",
+                    CreatureRace::Gnome => "G",
+                },
+            }
+        )?;
         Ok(())
     }
 }
@@ -482,7 +522,9 @@ mod test {
         println!("{:?}", grid);
         assert_eq!(format!("{:?}", grid), ROUND_2);
 
-        for _ in 0..20 { grid.step(); };
+        for _ in 0..20 {
+            grid.step();
+        }
         println!("{:?}", grid);
         assert_eq!(format!("{:?}", grid), ROUND_2);
 
@@ -510,7 +552,9 @@ mod test {
         println!("{:?}", grid);
         assert_eq!(format!("{:?}", grid), ROUND_28);
 
-        for _ in 0..18 { grid.step(); };
+        for _ in 0..18 {
+            grid.step();
+        }
         println!("{:?}", grid);
         assert_eq!(format!("{:?}", grid), ROUND_28);
 

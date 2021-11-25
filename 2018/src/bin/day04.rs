@@ -4,6 +4,14 @@ use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashMap;
 
+static INPUT: &str = include_str!("../../input/day04.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
+}
+
 #[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 struct Guard(usize);
 
@@ -114,8 +122,7 @@ fn parse_input_step2(input: &[Record]) -> Vec<Shift> {
     result
 }
 
-#[aoc_generator(day4)]
-pub fn parse_input(input: &str) -> Vec<Shift> {
+fn parse_input(input: &str) -> Vec<Shift> {
     parse_input_step2(&parse_input_step1(input))
 }
 
@@ -138,8 +145,7 @@ fn get_guards_with_sleepy_minutes(input: &[Shift]) -> HashMap<Guard, HashMap<usi
         })
 }
 
-#[aoc(day4, part1)]
-pub fn part1(input: &[Shift]) -> usize {
+fn part1(input: &[Shift]) -> usize {
     let data = get_guards_with_sleepy_minutes(input);
 
     let sleepiest_guard = data
@@ -157,8 +163,7 @@ pub fn part1(input: &[Shift]) -> usize {
     sleepiest_guard.0 * *sleepiest_minute
 }
 
-#[aoc(day4, part2)]
-pub fn part2(input: &[Shift]) -> usize {
+fn part2(input: &[Shift]) -> usize {
     let data = get_guards_with_sleepy_minutes(input);
 
     let (guard, minute, _) = data

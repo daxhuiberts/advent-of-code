@@ -1,8 +1,14 @@
 use itertools::Itertools;
 
-#[aoc(day14, part1)]
-pub fn part1(input: &str) -> String {
-    let input: usize = input.parse().unwrap();
+static INPUT: &str = include_str!("../../input/day14.txt");
+
+fn main() {
+    println!("part 1: {}", part1(INPUT));
+    println!("part 2: {}", part2(INPUT));
+}
+
+fn part1(input: &str) -> String {
+    let input: usize = input.trim().parse().unwrap();
 
     let mut recipes: Vec<usize> = vec![3, 7];
     let mut elves: Vec<usize> = vec![0, 1];
@@ -34,8 +40,8 @@ pub fn part1(input: &str) -> String {
     recipes[input..(input + 10)].iter().join("")
 }
 
-#[aoc(day14, part2)]
-pub fn part2(input: &str) -> usize {
+fn part2(input: &str) -> usize {
+    let input = input.trim();
     let input_len: usize = input.len();
     let input: Vec<usize> = input
         .chars()
@@ -70,7 +76,11 @@ pub fn part2(input: &str) -> usize {
         // print(&recipes, &elves);
 
         if len > input_len {
-            found = recipes[(len - input_len - 1)..len].windows(input_len).enumerate().find(|(_, window)| **window == input[..]).map(|(offset, _)| offset);
+            found = recipes[(len - input_len - 1)..len]
+                .windows(input_len)
+                .enumerate()
+                .find(|(_, window)| **window == input[..])
+                .map(|(offset, _)| offset);
         }
     }
 

@@ -1,7 +1,14 @@
+static INPUT: &str = include_str!("../../input/day12.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
+}
+
 type Input = (Vec<bool>, Vec<(Vec<bool>, bool)>);
 
-#[aoc_generator(day12)]
-pub fn parse_input(input: &str) -> Input {
+fn parse_input(input: &str) -> Input {
     fn state(char: &u8) -> bool {
         *char == b'#'
     }
@@ -23,13 +30,11 @@ pub fn parse_input(input: &str) -> Input {
     (initial_state, rules)
 }
 
-#[aoc(day12, part1)]
-pub fn part1(input: &Input) -> i64 {
+fn part1(input: &Input) -> i64 {
     run(input, 20)
 }
 
-#[aoc(day12, part2)]
-pub fn part2(input: &Input) -> i64 {
+fn part2(input: &Input) -> i64 {
     run(input, 50_000_000_000)
 }
 

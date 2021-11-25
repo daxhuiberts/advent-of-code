@@ -1,10 +1,15 @@
-#[aoc(day5, part1)]
-pub fn part1(input: &str) -> usize {
+static INPUT: &str = include_str!("../../input/day05.txt");
+
+fn main() {
+    println!("part 1: {}", part1(INPUT));
+    println!("part 2: {}", part2(INPUT));
+}
+
+fn part1(input: &str) -> usize {
     react(input.chars())
 }
 
-#[aoc(day5, part2)]
-pub fn part2(input: &str) -> usize {
+fn part2(input: &str) -> usize {
     (b'a'..b'z')
         .map(|exclude| {
             react(

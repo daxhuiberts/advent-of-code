@@ -1,17 +1,22 @@
 use std::collections::HashSet;
 
-#[aoc_generator(day1)]
-pub fn parse_input(input: &str) -> Vec<i32> {
+static INPUT: &str = include_str!("../../input/day01.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
+}
+
+fn parse_input(input: &str) -> Vec<i32> {
     input.lines().map(|line| line.parse().unwrap()).collect()
 }
 
-#[aoc(day1, part1)]
-pub fn part1(input: &[i32]) -> i32 {
+fn part1(input: &[i32]) -> i32 {
     input.iter().sum()
 }
 
-#[aoc(day1, part2)]
-pub fn part2(input: &[i32]) -> i32 {
+fn part2(input: &[i32]) -> i32 {
     let iterator = std::iter::once(&0).chain(input.iter().cycle());
     let cumulated = iterator.scan(0, |state, value| {
         *state += value;

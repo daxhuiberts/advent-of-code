@@ -3,8 +3,15 @@ use itertools::Itertools;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 
-#[aoc_generator(day6)]
-pub fn parse_input(input: &str) -> Vec<(usize, usize)> {
+static INPUT: &str = include_str!("../../input/day06.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
+}
+
+fn parse_input(input: &str) -> Vec<(usize, usize)> {
     input
         .lines()
         .map(|line| {
@@ -16,8 +23,7 @@ pub fn parse_input(input: &str) -> Vec<(usize, usize)> {
         .collect()
 }
 
-#[aoc(day6, part1)]
-pub fn part1(input: &[(usize, usize)]) -> usize {
+fn part1(input: &[(usize, usize)]) -> usize {
     let (x, y): (Vec<usize>, Vec<usize>) = input.iter().cloned().unzip();
     let (max_x, max_y) = (x.into_iter().max().unwrap(), y.into_iter().max().unwrap());
 
@@ -48,8 +54,7 @@ pub fn part1(input: &[(usize, usize)]) -> usize {
     *index_scores.values().max().unwrap()
 }
 
-#[aoc(day6, part2)]
-pub fn part2(input: &[(usize, usize)]) -> usize {
+fn part2(input: &[(usize, usize)]) -> usize {
     part2_inner(input, 10_000)
 }
 

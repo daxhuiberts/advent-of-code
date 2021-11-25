@@ -1,7 +1,14 @@
 use linked_list::{Cursor, LinkedList};
 
-#[aoc_generator(day9)]
-pub fn parse_input(input: &str) -> Box<(usize, usize)> {
+static INPUT: &str = include_str!("../../input/day09.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
+}
+
+fn parse_input(input: &str) -> Box<(usize, usize)> {
     let mut iter = input.split_whitespace();
     let players = iter.next().unwrap().parse().unwrap();
     let last_marble = iter.skip(5).next().unwrap().parse().unwrap();
@@ -61,13 +68,11 @@ fn game_results(players: usize, last_marble: usize) -> usize {
     scores.into_iter().max().unwrap()
 }
 
-#[aoc(day9, part1)]
-pub fn part1((players, last_marble): &(usize, usize)) -> usize {
+fn part1((players, last_marble): &(usize, usize)) -> usize {
     game_results(*players, *last_marble)
 }
 
-#[aoc(day9, part2)]
-pub fn part2((players, last_marble): &(usize, usize)) -> usize {
+fn part2((players, last_marble): &(usize, usize)) -> usize {
     game_results(*players, *last_marble * 100)
 }
 

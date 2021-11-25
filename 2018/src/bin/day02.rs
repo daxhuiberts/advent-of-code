@@ -1,8 +1,14 @@
 use aoctools::IterExt;
 use itertools::Itertools;
 
-#[aoc(day2, part1)]
-pub fn part1(input: &str) -> usize {
+static INPUT: &str = include_str!("../../input/day02.txt");
+
+fn main() {
+    println!("part 1: {}", part1(INPUT));
+    println!("part 2: {}", part2(INPUT));
+}
+
+fn part1(input: &str) -> usize {
     let (twos, threes): (Vec<_>, Vec<_>) = input
         .lines()
         .map(|entry| {
@@ -15,8 +21,7 @@ pub fn part1(input: &str) -> usize {
     twos.iter().filter(|two| **two).count() * threes.iter().filter(|three| **three).count()
 }
 
-#[aoc(day2, part2)]
-pub fn part2(input: &str) -> String {
+fn part2(input: &str) -> String {
     input
         .lines()
         .tuple_combinations()

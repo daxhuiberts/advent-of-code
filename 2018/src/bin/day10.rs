@@ -1,7 +1,14 @@
 use regex::Regex;
 
-#[aoc_generator(day10)]
-pub fn parse_input(input: &str) -> Vec<((i32, i32), (i32, i32))> {
+static INPUT: &str = include_str!("../../input/day10.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
+}
+
+fn parse_input(input: &str) -> Vec<((i32, i32), (i32, i32))> {
     let regex =
         Regex::new(r"\Aposition=<\s*(-?\d+),\s*(-?\d+)> velocity=<\s*(-?\d+),\s*(-?\d+)>\z")
             .unwrap();
@@ -20,17 +27,15 @@ pub fn parse_input(input: &str) -> Vec<((i32, i32), (i32, i32))> {
         .collect()
 }
 
-#[aoc(day10, part1)]
-pub fn part1(input: &[((i32, i32), (i32, i32))]) -> String {
+fn part1(input: &[((i32, i32), (i32, i32))]) -> String {
     calculate_message(input).0
 }
 
-#[aoc(day10, part2)]
-pub fn part2(input: &[((i32, i32), (i32, i32))]) -> usize {
+fn part2(input: &[((i32, i32), (i32, i32))]) -> usize {
     calculate_message(input).1
 }
 
-pub fn calculate_message(input: &[((i32, i32), (i32, i32))]) -> (String, usize) {
+fn calculate_message(input: &[((i32, i32), (i32, i32))]) -> (String, usize) {
     let (mut positions, velocities): (Vec<(i32, i32)>, Vec<(i32, i32)>) =
         input.iter().cloned().unzip();
 

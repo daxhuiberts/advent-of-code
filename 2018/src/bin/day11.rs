@@ -1,8 +1,14 @@
+static INPUT: &str = include_str!("../../input/day11.txt");
+
+fn main() {
+    println!("part 1: {}", part1(INPUT));
+    println!("part 2: {}", part2(INPUT));
+}
+
 const GRID_SIZE: i32 = 300;
 
-#[aoc(day11, part1)]
-pub fn part1(input: &str) -> String {
-    let serial = input.parse().unwrap();
+fn part1(input: &str) -> String {
+    let serial = input.trim().parse().unwrap();
     let grid = generate_grid(serial);
     let square_values = generate_square_values(&grid, 3);
     let ((x, y), _value) = square_values
@@ -13,9 +19,8 @@ pub fn part1(input: &str) -> String {
     format!("{},{}", x, y)
 }
 
-#[aoc(day11, part2)]
-pub fn part2(input: &str) -> String {
-    let serial = input.parse().unwrap();
+fn part2(input: &str) -> String {
+    let serial = input.trim().parse().unwrap();
     let grid = generate_grid(serial);
 
     let ((x, y), size, _) = (1..=20)
@@ -67,7 +72,7 @@ fn generate_grid(serial: i32) -> Vec<i32> {
 }
 
 fn calculate_power_level(serial: i32, x: i32, y: i32) -> i32 {
-    (((((((x + 10) * y) + serial) * (x + 10)) % 1000) / 100) - 5)
+    ((((((x + 10) * y) + serial) * (x + 10)) % 1000) / 100) - 5
 }
 
 #[cfg(test)]

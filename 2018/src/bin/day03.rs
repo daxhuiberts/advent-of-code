@@ -3,6 +3,14 @@ use itertools::Itertools;
 use regex::Regex;
 use std::collections::HashMap;
 
+static INPUT: &str = include_str!("../../input/day03.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct Claim {
     id: usize,
@@ -12,8 +20,7 @@ pub struct Claim {
     height: usize,
 }
 
-#[aoc_generator(day3)]
-pub fn parse_input(input: &str) -> Vec<Claim> {
+fn parse_input(input: &str) -> Vec<Claim> {
     let regex = Regex::new(r"\A#(\d+) @ (\d+),(\d+): (\d+)x(\d+)\z").unwrap();
 
     input
@@ -37,14 +44,12 @@ pub fn parse_input(input: &str) -> Vec<Claim> {
         .collect()
 }
 
-#[aoc(day3, part1)]
-pub fn part1(input: &[Claim]) -> usize {
+fn part1(input: &[Claim]) -> usize {
     let map = input_to_map(input);
     map.values().filter(|count| **count > 1).count()
 }
 
-#[aoc(day3, part2)]
-pub fn part2(input: &[Claim]) -> usize {
+fn part2(input: &[Claim]) -> usize {
     let map = input_to_map(input);
     input
         .iter()
@@ -65,6 +70,7 @@ fn get_positions(claim: &Claim) -> impl Iterator<Item = (usize, usize)> {
     let yrange = claim.yoffset..(claim.yoffset + claim.height);
     xrange.cartesian_product(yrange)
 }
+
 #[cfg(test)]
 mod test {
     use super::*;

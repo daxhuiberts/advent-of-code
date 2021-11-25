@@ -1,12 +1,19 @@
 use itertools::Itertools;
 use std::collections::HashMap;
 
-#[aoc_generator(day7)]
-pub fn parse_input(input: &str) -> Box<HashMap<char, Vec<char>>> {
+static INPUT: &str = include_str!("../../input/day07.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
+}
+
+fn parse_input(input: &str) -> Box<HashMap<char, Vec<char>>> {
     Box::new(parse_input_step2(&parse_input_step1(input)))
 }
 
-pub fn parse_input_step1(input: &str) -> Vec<(char, char)> {
+fn parse_input_step1(input: &str) -> Vec<(char, char)> {
     input
         .lines()
         .map(|line| {
@@ -19,7 +26,7 @@ pub fn parse_input_step1(input: &str) -> Vec<(char, char)> {
         .collect()
 }
 
-pub fn parse_input_step2(input: &[(char, char)]) -> HashMap<char, Vec<char>> {
+fn parse_input_step2(input: &[(char, char)]) -> HashMap<char, Vec<char>> {
     let mut prerequisites: HashMap<char, Vec<char>> = HashMap::new();
 
     for (before, after) in input {
@@ -30,8 +37,7 @@ pub fn parse_input_step2(input: &[(char, char)]) -> HashMap<char, Vec<char>> {
     prerequisites
 }
 
-#[aoc(day7, part1)]
-pub fn part1(prerequisites: &HashMap<char, Vec<char>>) -> String {
+fn part1(prerequisites: &HashMap<char, Vec<char>>) -> String {
     let mut result = String::new();
 
     while let Some(char) = get_next(prerequisites, &result, "") {
@@ -41,8 +47,7 @@ pub fn part1(prerequisites: &HashMap<char, Vec<char>>) -> String {
     result
 }
 
-#[aoc(day7, part2)]
-pub fn part2(prerequisites: &HashMap<char, Vec<char>>) -> usize {
+fn part2(prerequisites: &HashMap<char, Vec<char>>) -> usize {
     part2_inner(prerequisites, 5, 60)
 }
 

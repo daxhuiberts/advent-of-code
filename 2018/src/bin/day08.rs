@@ -1,20 +1,25 @@
-#[aoc_generator(day8)]
-pub fn parse_input(input: &str) -> Vec<usize> {
+static INPUT: &str = include_str!("../../input/day08.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
+}
+
+fn parse_input(input: &str) -> Vec<usize> {
     input
         .split_whitespace()
         .map(|item| item.parse().unwrap())
         .collect()
 }
 
-#[aoc(day8, part1)]
-pub fn part1(input: &[usize]) -> usize {
+fn part1(input: &[usize]) -> usize {
     let mut iter = input.iter().cloned();
     let entry = parse_entry(&mut iter);
     entry.sum_meta()
 }
 
-#[aoc(day8, part2)]
-pub fn part2(input: &[usize]) -> usize {
+fn part2(input: &[usize]) -> usize {
     let mut iter = input.iter().cloned();
     let entry = parse_entry(&mut iter);
     entry.node_value()

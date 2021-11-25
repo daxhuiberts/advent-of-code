@@ -1,8 +1,15 @@
+static INPUT: &str = include_str!("../../input/day13.txt");
+
+fn main() {
+    let input = parse_input(INPUT);
+    println!("part 1: {}", part1(&input));
+    println!("part 2: {}", part2(&input));
+}
+
 type Track = Vec<Vec<char>>;
 type Cart = (usize, usize, usize, char, usize);
 
-#[aoc_generator(day13)]
-pub fn parse_input(input: &str) -> (Track, Vec<Cart>) {
+fn parse_input(input: &str) -> (Track, Vec<Cart>) {
     let mut track: Track = input
         .lines()
         .map(|line| line.chars().collect::<Vec<char>>())
@@ -27,13 +34,11 @@ pub fn parse_input(input: &str) -> (Track, Vec<Cart>) {
     (track, carts)
 }
 
-#[aoc(day13, part1)]
-pub fn part1(input: &(Track, Vec<Cart>)) -> String {
+fn part1(input: &(Track, Vec<Cart>)) -> String {
     run(input, true)
 }
 
-#[aoc(day13, part2)]
-pub fn part2(input: &(Track, Vec<Cart>)) -> String {
+fn part2(input: &(Track, Vec<Cart>)) -> String {
     run(input, false)
 }
 
@@ -43,7 +48,6 @@ fn run(input: &(Track, Vec<Cart>), first_crash: bool) -> String {
     // print(&track, &carts);
 
     for generation in 1.. {
-
         let mut crashed: Vec<usize> = vec![];
 
         carts.sort_by_key(|(_, x, y, _, _)| (*y, *x));
