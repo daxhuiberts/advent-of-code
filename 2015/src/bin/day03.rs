@@ -1,13 +1,9 @@
+use aoctools::main;
 use aoctools::IterExt;
 use itertools::Itertools;
 use std::collections::HashSet;
 
-static INPUT: &str = include_str!("../../input/day03.txt");
-
-fn main() {
-    println!("part 1: {}", part1(INPUT));
-    println!("part 2: {}", part2(INPUT));
-}
+main!("day03");
 
 fn part1(input: &str) -> usize {
     input

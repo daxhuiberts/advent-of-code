@@ -1,12 +1,7 @@
+use aoctools::main;
 use itertools::Itertools;
 
-static INPUT: &str = include_str!("../../input/day02.txt");
-
-fn main() {
-    let input = parse_input(INPUT);
-    println!("part 1: {}", part1(&input));
-    println!("part 2: {}", part2(&input));
-}
+main!("day02", parse_input);
 
 fn parse_input(input: &str) -> Vec<(u32, u32, u32)> {
     input
