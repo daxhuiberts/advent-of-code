@@ -5,3 +5,5 @@ authors = ["Dax Huiberts <daxhuiberts@gmail.com>"]
 edition = "2021"
 
 [dependencies]
+aoctools = { path = "../aoctools" }
+itertools = "*"
