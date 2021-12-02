@@ -3,20 +3,20 @@ use itertools::Itertools;
 
 main!("day01", parse_input);
 
-fn parse_input(input: &str) -> Vec<usize> {
+fn parse_input(input: &str) -> Vec<u32> {
     input.lines().map(|line| line.parse().unwrap()).collect()
 }
 
-fn part1(input: &[usize]) -> usize {
+fn part1(input: &[u32]) -> usize {
     count_increases(input)
 }
 
-fn part2(input: &[usize]) -> usize {
+fn part2(input: &[u32]) -> usize {
     let aggregate = input.windows(3).map(|w| w.iter().sum()).collect_vec();
     count_increases(&aggregate)
 }
 
-fn count_increases(input: &[usize]) -> usize {
+fn count_increases(input: &[u32]) -> usize {
     input.iter().tuple_windows().filter(|(a, b)| a < b).count()
 }
 
@@ -24,7 +24,7 @@ fn count_increases(input: &[usize]) -> usize {
 mod tests {
     use super::*;
 
-    const INPUT: [usize; 10] = [199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
+    const INPUT: [u32; 10] = [199, 200, 208, 210, 200, 207, 240, 269, 260, 263];
 
     #[test]
     fn test_part1() {
