@@ -19,23 +19,14 @@ fn parse_input(input: &str) -> Vec<Vec<bool>> {
 
 fn part1<T: AsRef<[bool]>>(input: &[T]) -> u32 {
     let common_bits = common_bits(input);
-    let gamma_rate = calculate_rate(&common_bits, Rate::Gamma);
-    let epsilon_rate = calculate_rate(&common_bits, Rate::Epsilon);
+    let gamma_rate = calculate_rate(&common_bits, false);
+    let epsilon_rate = calculate_rate(&common_bits, true);
     gamma_rate * epsilon_rate
 }
 
-enum Rate {
-    Gamma,
-    Epsilon,
-}
-
-fn calculate_rate(common_bits: &[bool], rate: Rate) -> u32 {
-    let negate = match rate {
-        Rate::Gamma => false,
-        Rate::Epsilon => true,
-    };
+fn calculate_rate(common_bits: &[bool], negate: bool) -> u32 {
     common_bits.iter().fold(0, |number, &common_bit| {
-        (number << 1) + (common_bit ^ negate) as u32
+        (number << 1) + (common_bit ^ !negate) as u32
     })
 }
 
@@ -48,34 +39,24 @@ fn common_bits<T: AsRef<[bool]>>(input: &[T]) -> Vec<bool> {
 }
 
 fn part2<T: AsRef<[bool]> + Clone>(input: &[T]) -> u32 {
-    let oxygen_generator_rating =
-        calculate_life_support_rating(input, LifeSupportRating::OxygenGenerator);
-    let co2_scrubber_rating = calculate_life_support_rating(input, LifeSupportRating::Co2Scrubber);
+    let oxygen_generator_rating = calculate_life_support_rating(input, usize::ge);
+    let co2_scrubber_rating = calculate_life_support_rating(input, usize::lt);
     oxygen_generator_rating * co2_scrubber_rating
-}
-
-enum LifeSupportRating {
-    OxygenGenerator,
-    Co2Scrubber,
 }
 
 fn calculate_life_support_rating<T: AsRef<[bool]> + Clone>(
     input: &[T],
-    rating: LifeSupportRating,
+    comparator: fn(&usize, &usize) -> bool,
 ) -> u32 {
-    let negate = match rating {
-        LifeSupportRating::OxygenGenerator => false,
-        LifeSupportRating::Co2Scrubber => true,
-    };
     let input: Vec<Vec<bool>> = input.iter().map(|inner| inner.as_ref().to_vec()).collect();
     let len = input[0].len();
     let result: Vec<Vec<bool>> = (0..len).fold(input, |input, column| {
         if input.len() > 1 {
-            let true_count = input.iter().filter(|inner| inner[column]).count();
-            let most_common = true_count * 2 >= input.len();
+            let count = input.iter().filter(|inner| inner[column]).count();
+            let bit_value = comparator(&(count * 2), &input.len());
             input
                 .into_iter()
-                .filter(|inner| inner[column] == (most_common ^ negate))
+                .filter(|inner| inner[column] == bit_value)
                 .collect()
         } else {
             input
@@ -141,8 +122,8 @@ mod tests {
 
     #[test]
     fn test_rate() {
-        assert_eq!(calculate_rate(&common_bits(&INPUT), Rate::Gamma), 22);
-        assert_eq!(calculate_rate(&common_bits(&INPUT), Rate::Epsilon), 9);
+        assert_eq!(calculate_rate(&common_bits(&INPUT), true), 22);
+        assert_eq!(calculate_rate(&common_bits(&INPUT), false), 9);
     }
 
     #[test]
@@ -152,13 +133,7 @@ mod tests {
 
     #[test]
     fn test_calculate_life_support_rating() {
-        assert_eq!(
-            calculate_life_support_rating(&INPUT, LifeSupportRating::OxygenGenerator),
-            23
-        );
-        assert_eq!(
-            calculate_life_support_rating(&INPUT, LifeSupportRating::Co2Scrubber),
-            10
-        );
+        assert_eq!(calculate_life_support_rating(&INPUT, usize::ge), 23);
+        assert_eq!(calculate_life_support_rating(&INPUT, usize::lt), 10);
     }
 }
