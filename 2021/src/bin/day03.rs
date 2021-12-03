@@ -21,8 +21,8 @@ fn parse_input(input: &str) -> Vec<Vec<bool>> {
 
 fn part1<T: AsRef<[bool]>>(input: &[T]) -> u32 {
     let common_bits = common_bits(input);
-    let gamma_rate = rate(&common_bits, false);
-    let epsilon_rate = rate(&common_bits, true);
+    let gamma_rate = calculate_rate(&common_bits, Rate::Gamma);
+    let epsilon_rate = calculate_rate(&common_bits, Rate::Epsilon);
     gamma_rate * epsilon_rate
 }
 
@@ -30,9 +30,18 @@ fn part2<T: AsRef<[bool]>>(_input: &[T]) -> usize {
     0
 }
 
-fn rate(common_bits: &[bool], negate: bool) -> u32 {
+enum Rate {
+    Gamma,
+    Epsilon,
+}
+
+fn calculate_rate(common_bits: &[bool], rate: Rate) -> u32 {
+    let negate = match rate {
+        Rate::Gamma => false,
+        Rate::Epsilon => true,
+    };
     common_bits.iter().fold(0, |number, &common_bit| {
-        (number << 1) + if common_bit ^ negate { 1 } else { 0 }
+        (number << 1) + (common_bit ^ negate) as u32
     })
 }
 
@@ -98,8 +107,8 @@ mod tests {
 
     #[test]
     fn test_rate() {
-        assert_eq!(rate(&common_bits(&INPUT), false), 22);
-        assert_eq!(rate(&common_bits(&INPUT), true), 9);
+        assert_eq!(calculate_rate(&common_bits(&INPUT), Rate::Gamma), 22);
+        assert_eq!(calculate_rate(&common_bits(&INPUT), Rate::Epsilon), 9);
     }
 
     #[test]
