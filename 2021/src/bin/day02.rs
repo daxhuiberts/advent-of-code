@@ -83,8 +83,16 @@ fn part2(input: &[Command]) -> u32 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use indoc::indoc;
 
-    const INPUT_STR: &'static str = "forward 5\ndown 5\nforward 8\nup 3\ndown 8\nforward 2\n";
+    const INPUT_STR: &'static str = indoc! { "
+        forward 5
+        down 5
+        forward 8
+        up 3
+        down 8
+        forward 2
+    " };
 
     const INPUT: [Command; 6] = [
         Command::Forward(5),
