@@ -1,10 +1,9 @@
 use aoctools::main;
-use aoctools::transpose;
 
 main!("day03", parse_input);
 
 fn parse_input(input: &str) -> Vec<Vec<bool>> {
-    let parsed = input
+    input
         .lines()
         .map(|line| {
             line.chars()
@@ -15,8 +14,7 @@ fn parse_input(input: &str) -> Vec<Vec<bool>> {
                 })
                 .collect()
         })
-        .collect();
-    transpose(parsed)
+        .collect()
 }
 
 fn part1<T: AsRef<[bool]>>(input: &[T]) -> u32 {
@@ -24,10 +22,6 @@ fn part1<T: AsRef<[bool]>>(input: &[T]) -> u32 {
     let gamma_rate = calculate_rate(&common_bits, Rate::Gamma);
     let epsilon_rate = calculate_rate(&common_bits, Rate::Epsilon);
     gamma_rate * epsilon_rate
-}
-
-fn part2<T: AsRef<[bool]>>(_input: &[T]) -> usize {
-    0
 }
 
 enum Rate {
@@ -46,12 +40,53 @@ fn calculate_rate(common_bits: &[bool], rate: Rate) -> u32 {
 }
 
 fn common_bits<T: AsRef<[bool]>>(input: &[T]) -> Vec<bool> {
-    input
-        .iter()
+    (0..input[0].as_ref().len())
         .map(|column| {
-            column.as_ref().iter().filter(|&&cell| cell).count() > (column.as_ref().len() / 2)
+            input.iter().filter(|inner| inner.as_ref()[column]).count() > (input.len() / 2)
         })
         .collect()
+}
+
+fn part2<T: AsRef<[bool]> + Clone>(input: &[T]) -> u32 {
+    let oxygen_generator_rating =
+        calculate_life_support_rating(input, LifeSupportRating::OxygenGenerator);
+    let co2_scrubber_rating = calculate_life_support_rating(input, LifeSupportRating::Co2Scrubber);
+    oxygen_generator_rating * co2_scrubber_rating
+}
+
+enum LifeSupportRating {
+    OxygenGenerator,
+    Co2Scrubber,
+}
+
+fn calculate_life_support_rating<T: AsRef<[bool]> + Clone>(
+    input: &[T],
+    rating: LifeSupportRating,
+) -> u32 {
+    let negate = match rating {
+        LifeSupportRating::OxygenGenerator => false,
+        LifeSupportRating::Co2Scrubber => true,
+    };
+    let input: Vec<Vec<bool>> = input.iter().map(|inner| inner.as_ref().to_vec()).collect();
+    let len = input[0].len();
+    let result: Vec<Vec<bool>> = (0..len).fold(input, |input, column| {
+        if input.len() > 1 {
+            let true_count = input.iter().filter(|inner| inner[column]).count();
+            let most_common = true_count * 2 >= input.len();
+            input
+                .into_iter()
+                .filter(|inner| inner[column] == (most_common ^ negate))
+                .collect()
+        } else {
+            input
+        }
+    });
+
+    assert_eq!(result.len(), 1);
+
+    result[0]
+        .iter()
+        .fold(0, |number, &bit| (number << 1) + bit as u32)
 }
 
 #[cfg(test)]
@@ -74,22 +109,19 @@ mod tests {
         01010
     " };
 
-    const INPUT: [[bool; 12]; 5] = [
-        [
-            false, true, true, true, true, false, false, true, true, true, false, false,
-        ],
-        [
-            false, true, false, false, false, true, false, true, false, true, false, true,
-        ],
-        [
-            true, true, true, true, true, true, true, true, false, false, false, false,
-        ],
-        [
-            false, true, true, true, false, true, true, false, false, false, true, true,
-        ],
-        [
-            false, false, false, true, true, true, true, false, false, true, false, false,
-        ],
+    const INPUT: [[bool; 5]; 12] = [
+        [false, false, true, false, false],
+        [true, true, true, true, false],
+        [true, false, true, true, false],
+        [true, false, true, true, true],
+        [true, false, true, false, true],
+        [false, true, true, true, true],
+        [false, false, true, true, true],
+        [true, true, true, false, false],
+        [true, false, false, false, false],
+        [true, true, false, false, true],
+        [false, false, false, true, false],
+        [false, true, false, true, false],
     ];
 
     #[test]
@@ -103,7 +135,9 @@ mod tests {
     }
 
     #[test]
-    fn test_part2() {}
+    fn test_part2() {
+        assert_eq!(part2(&INPUT), 230)
+    }
 
     #[test]
     fn test_rate() {
@@ -114,5 +148,17 @@ mod tests {
     #[test]
     fn test_common_bits() {
         assert_eq!(common_bits(&INPUT), [true, false, true, true, false]);
+    }
+
+    #[test]
+    fn test_calculate_life_support_rating() {
+        assert_eq!(
+            calculate_life_support_rating(&INPUT, LifeSupportRating::OxygenGenerator),
+            23
+        );
+        assert_eq!(
+            calculate_life_support_rating(&INPUT, LifeSupportRating::Co2Scrubber),
+            10
+        );
     }
 }
