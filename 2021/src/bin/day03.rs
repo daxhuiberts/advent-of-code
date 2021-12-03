@@ -33,7 +33,8 @@ fn calculate_rate(common_bits: &[bool], negate: bool) -> u32 {
 fn common_bits<T: AsRef<[bool]>>(input: &[T]) -> Vec<bool> {
     (0..input[0].as_ref().len())
         .map(|column| {
-            input.iter().filter(|inner| inner.as_ref()[column]).count() > (input.len() / 2)
+            let count = input.iter().filter(|inner| inner.as_ref()[column]).count();
+            count * 2 >= input.len()
         })
         .collect()
 }
@@ -48,15 +49,15 @@ fn calculate_life_support_rating<T: AsRef<[bool]> + Clone>(
     input: &[T],
     comparator: fn(&usize, &usize) -> bool,
 ) -> u32 {
-    let input: Vec<Vec<bool>> = input.iter().map(|inner| inner.as_ref().to_vec()).collect();
-    let len = input[0].len();
-    let result: Vec<Vec<bool>> = (0..len).fold(input, |input, column| {
+    let input = input.to_vec();
+    let len = input[0].as_ref().len();
+    let result: Vec<_> = (0..len).fold(input, |input, column| {
         if input.len() > 1 {
-            let count = input.iter().filter(|inner| inner[column]).count();
+            let count = input.iter().filter(|inner| inner.as_ref()[column]).count();
             let bit_value = comparator(&(count * 2), &input.len());
             input
                 .into_iter()
-                .filter(|inner| inner[column] == bit_value)
+                .filter(|inner| inner.as_ref()[column] == bit_value)
                 .collect()
         } else {
             input
@@ -66,6 +67,7 @@ fn calculate_life_support_rating<T: AsRef<[bool]> + Clone>(
     assert_eq!(result.len(), 1);
 
     result[0]
+        .as_ref()
         .iter()
         .fold(0, |number, &bit| (number << 1) + bit as u32)
 }
