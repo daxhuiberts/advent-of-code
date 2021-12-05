@@ -67,8 +67,16 @@ fn calculate_score((card, draws): (&Card, &[u32])) -> u32 {
     sum_of_all_unmarked_numbers * draws.last().unwrap()
 }
 
-fn part2(_input: &Game) -> usize {
-    0
+fn part2(game: &Game) -> u32 {
+    calculate_score(find_desired_card(game, |cards, draws| {
+        cards.iter().all(|card| bingo_card(card, draws)).then(|| {
+            let previous_draws = &draws[0..(draws.len() - 1)];
+            cards
+                .iter()
+                .find(|&card| !bingo_card(card, previous_draws))
+                .unwrap()
+        })
+    }))
 }
 
 #[cfg(test)]
@@ -148,6 +156,6 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        assert_eq!(part2(&*INPUT), 0);
+        assert_eq!(part2(&*INPUT), 1924);
     }
 }
