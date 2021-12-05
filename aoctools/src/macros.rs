@@ -9,12 +9,14 @@ macro_rules! main {
         }
     };
     ( $day:literal, parse_input ) => {
+        use std::borrow::Borrow;
+
         static INPUT: &str = include_str!(concat!("../../input/", $day, ".txt"));
 
         fn main() {
             let input = parse_input(INPUT);
-            println!("part 1: {}", part1(input.as_ref()));
-            println!("part 2: {}", part2(input.as_ref()));
+            println!("part 1: {}", part1(input.borrow()));
+            println!("part 2: {}", part2(input.borrow()));
         }
     };
 }
