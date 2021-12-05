@@ -39,19 +39,30 @@ fn parse_input(input: &str) -> Game {
 }
 
 fn part1(game: &Game) -> u32 {
-    let (card, draws) = (1..game.draws.len())
+    calculate_score(find_desired_card(game, |cards, draws| {
+        cards.iter().find(|&card| bingo_card(card, draws))
+    }))
+}
+
+fn bingo_card(card: &Card, draws: &[u32]) -> bool {
+    card.rows()
+        .chain(card.cols())
+        .any(|mut line| line.all(|&number| draws.contains(&number)))
+}
+
+fn find_desired_card(
+    game: &Game,
+    finder: for<'a> fn(&'a [Card], &[u32]) -> Option<&'a Card>,
+) -> (&Card, &[u32]) {
+    (1..game.draws.len())
         .find_map(|draw_count| {
             let draws = &game.draws[0..draw_count];
-            game.cards
-                .iter()
-                .find(|&card| {
-                    card.rows()
-                        .chain(card.cols())
-                        .any(|mut line| line.all(|&number| draws.contains(&number)))
-                })
-                .map(|card| (card, draws))
+            finder(&game.cards, draws).map(|card| (card, draws))
         })
-        .unwrap();
+        .unwrap()
+}
+
+fn calculate_score((card, draws): (&Card, &[u32])) -> u32 {
     let sum_of_all_unmarked_numbers: u32 = card.data().iter().filter(|x| !draws.contains(x)).sum();
     sum_of_all_unmarked_numbers * draws.last().unwrap()
 }
