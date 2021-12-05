@@ -1,3 +1,4 @@
+pub mod grid;
 mod iterext;
 mod macros;
 mod vector;
