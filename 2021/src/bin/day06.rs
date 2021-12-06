@@ -12,8 +12,8 @@ fn part1(fish: &HashMap<u32, usize>) -> usize {
     multiply_fish_many_generations(fish, 80).values().sum()
 }
 
-fn part2(_input: &HashMap<u32, usize>) -> usize {
-    0
+fn part2(fish: &HashMap<u32, usize>) -> usize {
+    multiply_fish_many_generations(fish, 256).values().sum()
 }
 
 fn multiply_fish_many_generations(
@@ -72,7 +72,7 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        assert_eq!(part2(&INPUT), 0);
+        assert_eq!(part2(&INPUT), 26984457539);
     }
 
     #[test]
