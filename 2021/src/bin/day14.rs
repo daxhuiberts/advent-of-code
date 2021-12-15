@@ -1,4 +1,5 @@
 use aoctools::main;
+use aoctools::IterExt;
 use itertools::Itertools;
 use std::collections::HashMap;
 
@@ -23,31 +24,37 @@ fn part1(input: &Input) -> usize {
     calculate_polymer(input, 10)
 }
 
-fn part2(_input: &Input) -> usize {
-    0
+fn part2(input: &Input) -> usize {
+    calculate_polymer(input, 40)
 }
 
 fn calculate_polymer((template, rules): &Input, iterations: usize) -> usize {
-    let result = (0..iterations).fold(template.to_string(), |template, _| {
-        interleave(&template, rules)
-    });
-    let (min, max) = result
+    let map = template
         .chars()
-        .counts()
-        .values()
-        .cloned()
-        .minmax()
-        .into_option()
-        .unwrap();
-    max - min
-}
+        .tuple_windows()
+        .fold_ref(HashMap::new(), |map, (left, right)| {
+            *map.entry((left, right)).or_insert(0) += 1
+        });
 
-fn interleave(template: &str, rules: &HashMap<(char, char), char>) -> String {
-    let insertions = template
-        .chars()
-        .tuple_windows::<(char, char)>()
-        .map(|window| rules.get(&window).unwrap().clone());
-    template.chars().by_ref().interleave(insertions).collect()
+    let final_map = (0..iterations).fold(map, |map, _| {
+        map.iter()
+            .flat_map(|(&(left, right), &count)| {
+                let new_char = rules.get(&(left, right)).unwrap();
+                [((left, *new_char), count), ((*new_char, right), count)]
+            })
+            .fold_ref(HashMap::new(), |map, (entry, count)| {
+                *map.entry(entry).or_insert(0) += count
+            })
+    });
+
+    let counts: HashMap<char, usize> = final_map.iter().fold_ref(
+        HashMap::from([(template.chars().last().unwrap(), 1)]),
+        |map, ((left, _), count)| *map.entry(*left).or_insert(0) += count,
+    );
+
+    let (min, max) = counts.values().cloned().minmax().into_option().unwrap();
+
+    max - min
 }
 
 #[cfg(test)]
@@ -113,6 +120,6 @@ mod tests {
 
     #[test]
     fn test_part2() {
-        assert_eq!(part2(&*INPUT), 0);
+        assert_eq!(part2(&*INPUT), 2188189693529);
     }
 }
