@@ -1,5 +1,6 @@
 use aoctools::main;
 use itertools::Itertools;
+use std::ops::Deref;
 
 main!("day01", parse_input);
 
@@ -11,13 +12,13 @@ fn parse_input(input: &str) -> Vec<Vec<u32>> {
     ).collect()
 }
 
-fn part1(input: &[Vec<u32>]) -> u32 {
+fn part1<T: Deref<Target = [U]>, U: Deref<Target = [u32]>>(input: T) -> u32 {
     input.iter().map(|group| {
         group.iter().sum()
     }).max().unwrap()
 }
 
-fn part2(input: &[Vec<u32>]) -> u32 {
+fn part2<T: Deref<Target = [U]>, U: Deref<Target = [u32]>>(input: T) -> u32 {
     input.iter().map(|group| {
         group.iter().sum::<u32>()
     }).sorted().rev().take(3).sum()
@@ -45,13 +46,37 @@ mod tests {
         10000
     " };
 
+    fn input() -> Vec<Vec<u32>> {
+        vec![
+            vec![1000, 2000, 3000],
+            vec![4000],
+            vec![5000, 6000],
+            vec![7000, 8000, 9000],
+            vec![10000],
+        ]
+    }
+
+    #[test]
+    fn test_parse_input() {
+        let input = input();
+        let input = input.iter().map(|group| group.deref()).collect_vec();
+        let input: &[&[u32]] = &input;
+        assert_eq!(parse_input(INPUT_STR), input);
+    }
+
     #[test]
     fn test_part1() {
-        assert_eq!(part1(&parse_input(INPUT_STR)), 24_000);
+        let input = input();
+        let input = input.iter().map(|group| group.deref()).collect_vec();
+        let input: &[&[u32]] = &input;
+        assert_eq!(part1(input), 24_000);
     }
 
     #[test]
     fn test_part2() {
-        assert_eq!(part2(&parse_input(INPUT_STR)), 45_000);
+        let input = input();
+        let input = input.iter().map(|group| group.deref()).collect_vec();
+        let input: &[&[u32]] = &input;
+        assert_eq!(part2(input), 45_000);
     }
 }
