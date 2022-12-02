@@ -7,3 +7,4 @@ edition = "2021"
 aoctools = { path = "../aoctools" }
 indoc = "*"
 itertools = "*"
+lazy_static = "*"
