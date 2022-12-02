@@ -27,6 +27,9 @@ dependencies = [
 [[package]]
 name = "aoctools"
 version = "0.1.0"
+dependencies = [
+ "itertools",
+]
 
 [[package]]
 name = "autocfg"
