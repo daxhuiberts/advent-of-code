@@ -34,7 +34,7 @@ fn part1(input: &Input) -> usize {
             _ => panic!("should not happen")
         };
         shape_score + outcome_score
-    }).sum::<usize>()
+    }).sum()
 }
 
 fn part2(input: &Input) -> usize {
@@ -58,7 +58,7 @@ fn part2(input: &Input) -> usize {
             _ => panic!("should not happen")
         };
         outcome_score + shape_score
-    }).sum::<usize>()
+    }).sum()
 }
 
 #[cfg(test)]
